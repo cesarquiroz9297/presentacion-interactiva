@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<!--
+  Presentación Interactiva con Transiciones Morph 3D (Estilo Minimalista de Alto Impacto)
+  Sistema de información con drones inteligentes para detección temprana de incendios
+  forestales y deforestación en La Libertad 2026
+  Universidad César Vallejo · Escuela Profesional de Ingeniería de Sistemas · TIF Nivel I
+  Autor: César Quiroz
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Autor: César Quiroz" />
+  <title>Drones Inteligentes · La Libertad 2026 | UCV Ingeniería de Sistemas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       Sistema de Diseño Minimalista y Transiciones Morph (@trazomedico style)
+       Autor: César Quiroz
+       ========================================================================== */
+    :root {
+      --morph-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #060d09;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Tipografía condensada de alto impacto para títulos (idéntica al video de referencia) */
+    .title-condensed {
+      font-family: 'Antonio', sans-serif;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      line-height: 1.02;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ==========================================================================
+       FONDO AMBIENTAL CON PARTÍCULAS SUAVES Y VIÑETA OSCURA LIMPIA
+       ========================================================================== */
+    #ambientBg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.14) 0%, rgba(6, 13, 9, 0.94) 68%, #040906 100%);
+      transition: background 1.2s var(--morph-ease);
+    }
+
+    #bgPhotoLayer {
+      position: fixed;
+      inset: -5%;
+      width: 110%;
+      height: 110%;
+      object-fit: cover;
+      opacity: 0.14;
+      filter: blur(18px) brightness(0.45) saturate(1.4);
+      transform: scale(1.08);
+      transition: opacity 1.2s var(--morph-ease), transform 1.8s var(--morph-ease);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       OBJETO 3D PERSISTENTE QUE VIAJA Y SE TRANSFORMA ENTRE DIAPOSITIVAS
+       (Como el corazón 3D en el video de referencia)
+       ========================================================================== */
+    #persistentHero3D {
+      position: fixed;
+      z-index: 5;
+      width: 470px;
+      height: 470px;
+      left: 50%;
+      top: 52%;
+      transform: translate3d(-50%, -50%, 0) scale(1);
+      transition:
+        left 1.15s var(--morph-ease),
+        top 1.15s var(--morph-ease),
+        transform 1.15s var(--morph-ease),
+        opacity 1.05s var(--morph-ease),
+        filter 1.15s var(--morph-ease);
+      pointer-events: none;
+    }
+
+    /* Posiciones Morph del Objeto 3D según la escena */
+    body[data-hero-pos="center"] #persistentHero3D {
+      left: 50%;
+      top: 56%;
+      transform: translate3d(-50%, -50%, 0) scale(1.05);
+      opacity: 1;
+      filter: blur(0px) drop-shadow(0 0 65px rgba(16, 185, 129, 0.45));
+    }
+
+    body[data-hero-pos="bg-blur"] #persistentHero3D {
+      left: 58%;
+      top: 52%;
+      transform: translate3d(-50%, -50%, 0) scale(1.45);
+      opacity: 0.22;
+      filter: blur(6px) drop-shadow(0 0 80px rgba(249, 115, 22, 0.35));
+    }
+
+    body[data-hero-pos="right"] #persistentHero3D {
+      left: 79%;
+      top: 53%;
+      transform: translate3d(-50%, -50%, 0) scale(1.08);
+      opacity: 0.96;
+      filter: blur(0px) drop-shadow(0 0 60px rgba(16, 185, 129, 0.45));
+    }
+
+    body[data-hero-pos="left"] #persistentHero3D {
+      left: 22%;
+      top: 53%;
+      transform: translate3d(-50%, -50%, 0) scale(1.1);
+      opacity: 0.96;
+      filter: blur(0px) drop-shadow(0 0 60px rgba(249, 115, 22, 0.45));
+    }
+
+    body[data-hero-pos="right-edge"] #persistentHero3D {
+      left: 88%;
+      top: 54%;
+      transform: translate3d(-50%, -50%, 0) scale(1.18);
+      opacity: 0.92;
+      filter: blur(0px) drop-shadow(0 0 60px rgba(16, 185, 129, 0.4));
+    }
+
+    body[data-hero-pos="bottom-left"] #persistentHero3D {
+      left: 16%;
+      top: 82%;
+      transform: translate3d(-50%, -50%, 0) scale(0.95);
+      opacity: 0.85;
+      filter: blur(1px) drop-shadow(0 0 50px rgba(16, 185, 129, 0.45));
+    }
+
+    /* Animación interna de flotación suave del Objeto 3D */
+    @keyframes float3D {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50%      { transform: translateY(-14px) rotate(1.5deg); }
+    }
+
+    .hero-inner-float {
+      width: 100%;
+      height: 100%;
+      animation: float3D 5.5s ease-in-out infinite;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       TRANSICIÓN DE ESCENAS CON ENTRADA Y SALIDA MORPH SUAVE
+       ========================================================================== */
+    .scene {
+      position: absolute;
+      inset: 0;
+      padding: 4.5rem 5.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 36px, 0) scale(0.97);
+      transition:
+        opacity 0.85s var(--morph-ease),
+        transform 0.95s var(--morph-ease);
+      z-index: 10;
+    }
+
+    .scene.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .scene.prev {
+      opacity: 0;
+      transform: translate3d(-48px, 0, 0) scale(0.96);
+    }
+
+    /* Elementos internos escalonados */
+    .stagger {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+      transition: opacity 0.8s var(--morph-ease), transform 0.9s var(--morph-ease);
+    }
+
+    .scene.active .stagger {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .scene.active .d-1 { transition-delay: 0.08s; }
+    .scene.active .d-2 { transition-delay: 0.16s; }
+    .scene.active .d-3 { transition-delay: 0.24s; }
+    .scene.active .d-4 { transition-delay: 0.32s; }
+    .scene.active .d-5 { transition-delay: 0.40s; }
+
+    /* ==========================================================================
+       COMPONENTES VISUALES IDÉNTICOS AL VIDEO DE REFERENCIA (@trazomedico)
+       ========================================================================== */
+    /* 1. Tarjetas sólidas con icono circular flotando arriba (00:06 y 00:22) */
+    .risk-card {
+      position: relative;
+      padding: 3.2rem 1.4rem 1.8rem;
+      border-radius: 1.35rem;
+      text-align: center;
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.45);
+      transition: transform 0.4s var(--morph-ease), box-shadow 0.4s ease;
+    }
+    .risk-card:hover {
+      transform: translateY(-8px);
+    }
+    .risk-card-icon {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 68px;
+      height: 68px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid #060d09;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    }
+
+    /* 2. Barras horizontales con borde luminoso (00:08) */
+    .glow-bar {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(52, 211, 153, 0.55);
+      border-radius: 1rem;
+      padding: 1.05rem 1.5rem;
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.14);
+      transition: transform 0.35s var(--morph-ease), border-color 0.35s ease, background 0.35s ease;
+    }
+    .glow-bar:hover {
+      transform: translateX(8px);
+      background: rgba(16, 185, 129, 0.14);
+      border-color: #34d399;
+    }
+
+    /* 3. Tarjetas blancas limpias con chapita numerada en la esquina (00:11) */
+    .white-step-card {
+      position: relative;
+      background: #f4f7f5;
+      color: #0f172a;
+      border-radius: 1.35rem;
+      padding: 1.65rem 1.85rem;
+      box-shadow: 0 25px 55px rgba(0, 0, 0, 0.55);
+    }
+    .step-badge {
+      position: absolute;
+      top: -16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 4. Tarjetas píldora 2x2 con medallón circular lateral (00:13) */
+    .entry-pill-card {
+      position: relative;
+      background: #f4f7f5;
+      color: #0f172a;
+      border-radius: 1.25rem;
+      padding: 1.25rem 4.2rem 1.25rem 1.4rem;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      transition: transform 0.35s var(--morph-ease);
+    }
+    .entry-pill-card:hover {
+      transform: scale(1.03);
+    }
+    .entry-medallion {
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 66px;
+      height: 66px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 5. Tarjetas de carrusel de cristal esmerilado con foto e icono superior (00:17 y 00:24) */
+    .frost-carousel-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 1.6rem;
+      padding: 1.35rem;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      transition: transform 0.45s var(--morph-ease), border-color 0.35s ease;
+    }
+    .frost-carousel-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: #34d399;
+    }
+
+    /* Barras de progreso animadas */
+    .bar-fill {
+      width: 0%;
+      transition: width 1.35s var(--morph-ease);
+    }
+  
+    #sceneStage {
+      perspective: 1600px;
+      transform-style: preserve-3d;
+    }
+
+    .scene {
+      transform: translate3d(80px, 20px, -220px) rotateY(-12deg) rotateX(4deg) scale(0.94);
+      filter: blur(6px);
+      transform-style: preserve-3d;
+    }
+    .scene.active {
+      transform: translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
+      filter: blur(0px);
+    }
+    .scene.prev {
+      transform: translate3d(-90px, -15px, -240px) rotateY(12deg) rotateX(-4deg) scale(0.94);
+      filter: blur(6px);
+    }
+
+    /* Diorama 3D Multicapa ubicado limpiamente en el lado libre de la pantalla */
+    #persistentHero3D {
+      position: fixed;
+      z-index: 6;
+      width: 440px;
+      height: 350px;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    body[data-hero-pos="right"] #persistentHero3D {
+      left: 77%;
+      top: 54%;
+      transform: translate3d(-50%, -50%, 0) rotateY(-16deg) rotateX(5deg) scale(1);
+      opacity: 1;
+      filter: blur(0px);
+    }
+
+    body[data-hero-pos="left"] #persistentHero3D {
+      left: 22%;
+      top: 54%;
+      transform: translate3d(-50%, -50%, 0) rotateY(16deg) rotateX(5deg) scale(1);
+      opacity: 1;
+      filter: blur(0px);
+    }
+
+    body[data-hero-pos="right-edge"] #persistentHero3D {
+      left: 86%;
+      top: 54%;
+      transform: translate3d(-50%, -50%, 0) rotateY(-20deg) scale(0.92);
+      opacity: 0.92;
+      filter: blur(0px);
+    }
+
+    body[data-hero-pos="bg-blur"] #persistentHero3D {
+      left: 50%;
+      top: 52%;
+      transform: translate3d(-50%, -50%, -180px) scale(1.25);
+      opacity: 0.11;
+      filter: blur(10px);
+    }
+
+    body[data-hero-pos="bottom-left"] #persistentHero3D {
+      left: 16%;
+      top: 78%;
+      transform: translate3d(-50%, -50%, 0) rotateY(14deg) scale(0.82);
+      opacity: 0.85;
+      filter: blur(0px);
+    }
+
+    .diorama-3d-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.25s ease-out;
+    }
+
+    .diorama-layer-back {
+      position: absolute;
+      inset: -12px;
+      border-radius: 1.8rem;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(6, 24, 15, 0.8), rgba(249, 115, 22, 0.22));
+      border: 1.5px solid rgba(52, 211, 153, 0.38);
+      transform: translateZ(-40px) rotateZ(-2deg);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(16, 185, 129, 0.25);
+    }
+
+    .diorama-main-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      border: 2.5px solid rgba(255, 255, 255, 0.28);
+      box-shadow: -12px 20px 45px rgba(0, 0, 0, 0.78), inset 0 2px 4px rgba(255, 255, 255, 0.35);
+      transform: translateZ(10px);
+      background: #04120b;
+    }
+
+    @keyframes scanLaser3D {
+      0%   { top: 5%; opacity: 0.85; }
+      50%  { top: 92%; opacity: 0.95; }
+      100% { top: 5%; opacity: 0.85; }
+    }
+
+    .diorama-laser-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+      background: linear-gradient(90deg, transparent, #34d399, #ffffff, #34d399, transparent);
+      box-shadow: 0 0 18px #10b981;
+      animation: scanLaser3D 3.8s ease-in-out infinite;
+    }
+
+    .diorama-popout-top {
+      position: absolute;
+      top: -22px;
+      left: -22px;
+      padding: 0.7rem 1.1rem;
+      border-radius: 1.15rem;
+      background: rgba(6, 22, 14, 0.94);
+      backdrop-filter: blur(18px);
+      border: 2px solid rgba(52, 211, 153, 0.65);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.82), 0 0 25px rgba(16, 185, 129, 0.35);
+      transform: translateZ(65px);
+    }
+
+    .diorama-popout-bottom {
+      position: absolute;
+      bottom: -24px;
+      right: -22px;
+      width: 175px;
+      height: 110px;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 2.5px solid rgba(251, 191, 36, 0.65);
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.85), 0 0 22px rgba(249, 115, 22, 0.35);
+      transform: translateZ(82px);
+      background: #06120c;
+    }
+
+    /* Robot Dron 3D Global (Por encima de todas las diapositivas · Z-Index 65) */
+    #globalDroneStage {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      pointer-events: none;
+      perspective: 1400px;
+      overflow: hidden;
+    }
+
+    #roamingDrone3D {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 185px;
+      height: 185px;
+      pointer-events: auto;
+      cursor: grab;
+      transform-style: preserve-3d;
+      will-change: transform;
+      filter: drop-shadow(0 28px 32px rgba(0, 0, 0, 0.8));
+    }
+
+    #roamingDrone3D:active {
+      cursor: grabbing;
+    }
+
+    #droneLaserCone {
+      position: absolute;
+      top: 122px;
+      left: 50%;
+      width: 150px;
+      height: 195px;
+      transform: translateX(-50%);
+      background: conic-gradient(from 160deg at 50% 0%, transparent 0deg, rgba(16, 185, 129, 0.24) 20deg, rgba(52, 211, 153, 0.05) 40deg, transparent 45deg);
+      filter: blur(4px);
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    #roamingEmotionBubble {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%) translateZ(40px);
+      white-space: nowrap;
+      padding: 5px 13px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: rgba(4, 15, 10, 0.95);
+      border: 2px solid #34d399;
+      color: #ecfdf5;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.75), 0 0 20px rgba(16, 185, 129, 0.45);
+      pointer-events: none;
+    }
+
+    @keyframes naturalBlink {
+      0%, 94%, 100% { transform: scaleY(1); }
+      97%           { transform: scaleY(0.08); }
+    }
+
+    .visor-eyes-blink {
+      transform-origin: 110px 104px;
+      animation: naturalBlink 4s infinite;
+    }
+
+    /* ==========================================================================
+       ANIMACIÓN CONTINUA EN TIEMPO REAL PARA TODAS LAS IMÁGENES DEL PROYECTO
+       Autor: César Quiroz
+       ========================================================================== */
+    @keyframes liveImageCinema {
+      0%   { transform: scale(1.03) translate3d(0px, 0px, 0) rotate(0deg); filter: brightness(1) saturate(1.08); }
+      33%  { transform: scale(1.11) translate3d(-6px, -4px, 0) rotate(-0.4deg); filter: brightness(1.08) saturate(1.22); }
+      66%  { transform: scale(1.14) translate3d(6px, -5px, 0) rotate(0.4deg); filter: brightness(1.04) saturate(1.18); }
+      100% { transform: scale(1.03) translate3d(0px, 0px, 0) rotate(0deg); filter: brightness(1) saturate(1.08); }
+    }
+
+    .diorama-main-frame img,
+    .diorama-popout-bottom img,
+    .frost-carousel-card img {
+      animation: liveImageCinema 8.5s ease-in-out infinite;
+      will-change: transform, filter;
+    }
+
+    .risk-card {
+      cursor: pointer;
+    }
+    .risk-card::after,
+    .frost-carousel-card::after,
+    .glow-bar::after,
+    .white-step-card::after,
+    .entry-pill-card::after {
+      content: '👁️ Ver';
+      display: inline-block;
+      margin-top: 0.55rem;
+      padding: 0.18rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.24);
+      border: 1px solid rgba(52, 211, 153, 0.6);
+      font-size: 10px;
+      font-weight: 800;
+      color: #ecfdf5;
+      letter-spacing: 0.03em;
+      transition: all 0.25s ease;
+    }
+    .white-step-card::after,
+    .entry-pill-card::after {
+      background: rgba(5, 150, 105, 0.14);
+      border-color: rgba(5, 150, 105, 0.45);
+      color: #065f46;
+    }
+    .risk-card:hover::after,
+    .frost-carousel-card:hover::after,
+    .glow-bar:hover::after,
+    .white-step-card:hover::after,
+    .entry-pill-card:hover::after {
+      background: #10b981;
+      color: #022c22;
+      transform: scale(1.04);
+    }
+
+    /* ==========================================================================
+       CAPA MODAL 3D DE COMPARACIÓN VISUAL (REALIDAD ACTUAL VS SOLUCIÓN DRON IA)
+       Autor: César Quiroz
+       ========================================================================== */
+    #visualCompareModal3D {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(2, 10, 6, 0.86);
+      backdrop-filter: blur(18px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      perspective: 1500px;
+    }
+
+    #visualCompareModal3D.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .compare-3d-box {
+      width: 100%;
+      max-width: 980px;
+      background: linear-gradient(145deg, rgba(6, 28, 18, 0.96), rgba(3, 14, 9, 0.98));
+      border: 2px solid rgba(52, 211, 153, 0.55);
+      border-radius: 1.8rem;
+      padding: 1.6rem 2rem;
+      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.9), 0 0 60px rgba(16, 185, 129, 0.3);
+      transform: rotateX(12deg) scale(0.88) translateY(30px);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d;
+    }
+
+    #visualCompareModal3D.open .compare-3d-box {
+      transform: rotateX(0deg) scale(1) translateY(0px);
+    }
+
+    .compare-img-card {
+      position: relative;
+      height: 250px;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+    }
+
+    .compare-img-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: liveImageCinema 7s ease-in-out infinite;
+    }
+
+    /* ==========================================================================
+       DISEÑO RESPONSIVO ELEGANTE PARA TABLETS Y CELULARES
+       Autor: César Quiroz
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .scene {
+        padding: 4.2rem 1.8rem 4.5rem;
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      #persistentHero3D {
+        width: 310px;
+        height: 240px;
+        opacity: 0.22 !important;
+        left: 50% !important;
+        top: 56% !important;
+        filter: blur(4px) !important;
+      }
+      #roamingDrone3D {
+        width: 125px;
+        height: 125px;
+      }
+      #roamingEmotionBubble {
+        font-size: 10px;
+        padding: 3px 9px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .scene {
+        padding: 3.8rem 1.1rem 4.5rem;
+      }
+      .title-condensed {
+        font-size: 2.35rem !important;
+        line-height: 1.06 !important;
+      }
+      #roamingDrone3D {
+        width: 100px;
+        height: 100px;
+      }
+      .entry-pill-card {
+        padding-right: 3.5rem;
+      }
+      .entry-medallion {
+        right: -8px;
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+  </style>
+</head>
+<body data-hero-pos="right">
+
+  <!-- ==========================================================================
+       FONDO AMBIENTAL + CANVAS DE PARTÍCULAS BIOLÓGICAS / FORESTALES 3D
+       ========================================================================== -->
+  
+  <!-- ==========================================================================
+       ROBOT DRON 3D GLOBAL (POR ENCIMA DE TODAS LAS DIAPOSITIVAS · Z-INDEX 65)
+       Vaga libremente por toda la pantalla, reacciona con emociones y mira al cursor
+       Autor: César Quiroz
+       ========================================================================== -->
+  <div id="globalDroneStage">
+    <canvas id="droneTrailCanvas" class="absolute inset-0 pointer-events-none"></canvas>
+
+    <div id="roamingDrone3D" onclick="triggerDroneAcrobatics()" title="¡Haz clic en mí o arrástrame! Soy el Robot Dron 3D de la UCV">
+      <div id="roamingEmotionBubble">😊 ¡Hola! Soy el Dron IA UCV</div>
+      <div id="droneLaserCone"></div>
+
+      <svg id="droneSvgModel" class="w-full h-full overflow-visible" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="pbrShell" cx="32%" cy="24%" r="72%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="28%" stop-color="#e2e8f0"/>
+            <stop offset="68%" stop-color="#64748b"/>
+            <stop offset="92%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+          </radialGradient>
+          <linearGradient id="pbrEmeraldArmor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6ee7b7"/>
+            <stop offset="40%" stop-color="#10b981"/>
+            <stop offset="80%" stop-color="#047857"/>
+            <stop offset="100%" stop-color="#022c22"/>
+          </linearGradient>
+          <linearGradient id="pbrCarbon" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="50%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#020617"/>
+          </linearGradient>
+          <radialGradient id="pbrVisor" cx="40%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="45%" stop-color="#090d16"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+          <filter id="ledGlow3D" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.8" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Propulsor de plasma inferior -->
+        <ellipse cx="110" cy="172" rx="18" ry="8" fill="rgba(16,185,129,0.55)" filter="url(#ledGlow3D)">
+          <animate attributeName="rx" values="15;22;15" dur="0.4s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- 4 Brazos Articulados 3D -->
+        <path d="M72 92 L26 58 L32 50 L78 82 Z" fill="url(#pbrCarbon)" stroke="#64748b" stroke-width="1"/>
+        <path d="M148 92 L194 58 L188 50 L142 82 Z" fill="url(#pbrCarbon)" stroke="#64748b" stroke-width="1"/>
+        <path d="M74 126 L32 156 L38 164 L82 134 Z" fill="url(#pbrCarbon)" stroke="#64748b" stroke-width="1"/>
+        <path d="M146 126 L188 156 L182 164 L138 134 Z" fill="url(#pbrCarbon)" stroke="#64748b" stroke-width="1"/>
+
+        <!-- 4 Rotores 3D con Vórtices -->
+        <g>
+          <ellipse cx="28" cy="48" rx="28" ry="8" fill="rgba(52,211,153,0.24)" stroke="#34d399" stroke-width="2" stroke-dasharray="18 8">
+            <animateTransform attributeName="transform" type="rotate" from="0 28 48" to="360 28 48" dur="0.12s" repeatCount="indefinite"/>
+          </ellipse>
+          <rect x="21" y="46" width="14" height="14" rx="4" fill="url(#pbrShell)" stroke="#334155"/>
+          <circle cx="28" cy="46" r="4" fill="#10b981"/>
+        </g>
+        <g>
+          <ellipse cx="192" cy="48" rx="28" ry="8" fill="rgba(52,211,153,0.24)" stroke="#34d399" stroke-width="2" stroke-dasharray="18 8">
+            <animateTransform attributeName="transform" type="rotate" from="360 192 48" to="0 192 48" dur="0.12s" repeatCount="indefinite"/>
+          </ellipse>
+          <rect x="185" y="46" width="14" height="14" rx="4" fill="url(#pbrShell)" stroke="#334155"/>
+          <circle cx="192" cy="46" r="4" fill="#10b981"/>
+        </g>
+        <g>
+          <ellipse cx="34" cy="158" rx="25" ry="7" fill="rgba(52,211,153,0.2)" stroke="#34d399" stroke-width="1.8" stroke-dasharray="14 6">
+            <animateTransform attributeName="transform" type="rotate" from="0 34 158" to="360 34 158" dur="0.14s" repeatCount="indefinite"/>
+          </ellipse>
+          <rect x="28" y="155" width="12" height="12" rx="4" fill="url(#pbrShell)" stroke="#334155"/>
+        </g>
+        <g>
+          <ellipse cx="186" cy="158" rx="25" ry="7" fill="rgba(52,211,153,0.2)" stroke="#34d399" stroke-width="1.8" stroke-dasharray="14 6">
+            <animateTransform attributeName="transform" type="rotate" from="360 186 158" to="0 186 158" dur="0.14s" repeatCount="indefinite"/>
+          </ellipse>
+          <rect x="180" y="155" width="12" height="12" rx="4" fill="url(#pbrShell)" stroke="#334155"/>
+        </g>
+
+        <!-- Antenas Duales -->
+        <path d="M98 54 L92 30 M122 54 L128 30" stroke="#cbd5e1" stroke-width="3.5" stroke-linecap="round"/>
+        <circle id="roamingAntennaL" cx="92" cy="28" r="6" fill="#10b981" filter="url(#ledGlow3D)"/>
+        <circle id="roamingAntennaR" cx="128" cy="28" r="6" fill="#10b981" filter="url(#ledGlow3D)"/>
+
+        <!-- Cápsula Esférica 3D Principal -->
+        <rect x="54" y="50" width="112" height="96" rx="46" fill="url(#pbrShell)" stroke="#f8fafc" stroke-width="1.5"/>
+        <path d="M62 74 C62 46, 158 46, 158 74 C140 64, 80 64, 62 74 Z" fill="url(#pbrEmeraldArmor)"/>
+        <rect x="46" y="84" width="10" height="30" rx="5" fill="url(#pbrEmeraldArmor)" stroke="#a7f3d0" stroke-width="1"/>
+        <rect x="164" y="84" width="10" height="30" rx="5" fill="url(#pbrEmeraldArmor)" stroke="#a7f3d0" stroke-width="1"/>
+        <ellipse cx="92" cy="64" rx="26" ry="7" transform="rotate(-12 92 64)" fill="rgba(255,255,255,0.65)"/>
+
+        <!-- Visor Curvo 3D OLED -->
+        <rect x="64" y="72" width="92" height="54" rx="25" fill="url(#pbrVisor)" stroke="#475569" stroke-width="2.5"/>
+        <path d="M72 78 Q110 73 146 80" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Cámara Gimbal 3D Inferior -->
+        <circle cx="110" cy="154" r="13" fill="url(#pbrCarbon)" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="110" cy="154" r="7" fill="#090d16"/>
+        <circle id="roamingGimbalLens" cx="110" cy="154" r="4" fill="#10b981" filter="url(#ledGlow3D)"/>
+        <circle cx="108" cy="152" r="1.5" fill="#ffffff"/>
+
+        <!-- Expresiones Faciales LED -->
+        <g id="roamingEyesOffset">
+          <g class="visor-eyes-blink" filter="url(#ledGlow3D)">
+            <g id="rface-happy">
+              <path d="M76 100 Q88 85 100 100" stroke="#34d399" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+              <path d="M120 100 Q132 85 144 100" stroke="#34d399" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+              <path d="M98 112 Q110 121 122 112" stroke="#34d399" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <ellipse cx="73" cy="108" rx="4.5" ry="2.5" fill="rgba(52,211,153,0.5)"/>
+              <ellipse cx="147" cy="108" rx="4.5" ry="2.5" fill="rgba(52,211,153,0.5)"/>
+            </g>
+            <g id="rface-shocked" style="display:none;">
+              <circle cx="88" cy="98" r="12" stroke="#fbbf24" stroke-width="4.5" fill="rgba(251,191,36,0.2)"/>
+              <circle cx="88" cy="98" r="4.5" fill="#ffffff"/>
+              <circle cx="132" cy="98" r="12" stroke="#fbbf24" stroke-width="4.5" fill="rgba(251,191,36,0.2)"/>
+              <circle cx="132" cy="98" r="4.5" fill="#ffffff"/>
+              <ellipse cx="110" cy="115" rx="7" ry="8" stroke="#fbbf24" stroke-width="3.8" fill="rgba(251,191,36,0.15)"/>
+            </g>
+            <g id="rface-angry" style="display:none;">
+              <line x1="74" y1="86" x2="100" y2="96" stroke="#ef4444" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="146" y1="86" x2="120" y2="96" stroke="#ef4444" stroke-width="5.5" stroke-linecap="round"/>
+              <path d="M76 98 A11 11 0 0 0 100 98 Z" fill="#ef4444"/>
+              <path d="M120 98 A11 11 0 0 0 144 98 Z" fill="#ef4444"/>
+              <path d="M97 116 Q110 108 123 116" stroke="#ef4444" stroke-width="4" stroke-linecap="round" fill="none"/>
+            </g>
+            <g id="rface-scanning" style="display:none;">
+              <rect x="74" y="92" width="24" height="12" rx="4" fill="#38bdf8"/>
+              <circle cx="132" cy="98" r="13" stroke="#38bdf8" stroke-width="3.2" stroke-dasharray="8 4" fill="none">
+                <animateTransform attributeName="transform" type="rotate" from="0 132 98" to="360 132 98" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="132" cy="98" r="5" fill="#38bdf8"/>
+              <line x1="94" y1="115" x2="126" y2="115" stroke="#38bdf8" stroke-width="3.8" stroke-linecap="round"/>
+            </g>
+            <g id="rface-turbo" style="display:none;">
+              <path d="M75 88 L97 98 L75 108" stroke="#c084fc" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M145 88 L123 98 L145 108" stroke="#c084fc" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M94 114 L110 120 L126 114" stroke="#34d399" stroke-width="4" stroke-linecap="round" fill="none"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="ambientBg"></div>
+  <img id="bgPhotoLayer" src="./assets/image1.png" alt="Fondo ambiental" />
+  <canvas id="bokehCanvas" class="fixed inset-0 z-[2] pointer-events-none"></canvas>
+
+  <!-- ==========================================================================
+       OBJETO 3D PERSISTENTE QUE VIAJA ENTRE ESCENAS (DRON + NÚCLEO FORESTAL 3D)
+       ========================================================================== -->
+    <div id="persistentHero3D">
+    <div class="diorama-3d-stage" id="dioramaStage3D">
+      <!-- Capa Base 3D Biselada (Z: -45px) -->
+      <div class="diorama-layer-back"></div>
+
+      <!-- Marco Fotográfico 3D Principal (Z: +10px) -->
+      <div class="diorama-main-frame">
+        <img id="heroSphereImg" src="./assets/image1.png" alt="Escena 3D Principal" class="w-full h-full object-cover transition-all duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-emerald-950/25"></div>
+        <div class="diorama-laser-line"></div>
+        <div class="absolute bottom-3.5 left-4 right-4 flex items-center justify-between">
+          <span id="dioramaCaption" class="px-3 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-emerald-400/40 text-xs font-bold text-emerald-300 truncate">
+            🚁 Sistema de Drones Inteligentes · UCV 2026
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-500/25 border border-emerald-400/50 font-mono-code text-[10px] font-bold text-white shrink-0 ml-2">
+            3D LIVE
+          </span>
+        </div>
+      </div>
+
+      <!-- Tarjeta KPI 3D Pop-Out Superior (Z: +70px) -->
+      <div class="diorama-popout-top" id="dioramaKpiBox">
+        <div class="flex items-center gap-3">
+          <div id="dioramaKpiIcon" class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-2xl shadow-lg">
+            🚁
+          </div>
+          <div>
+            <div id="dioramaKpiValue" class="title-condensed text-2xl sm:text-3xl text-white leading-none">&lt; 10 cm/px</div>
+            <div id="dioramaKpiLabel" class="text-[11px] text-emerald-300 font-semibold mt-0.5">Resolución Dron IA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segunda Cámara 3D Pop-Out Inferior (Z: +88px) -->
+      <div class="diorama-popout-bottom">
+        <img id="dioramaSecondaryImg" src="./assets/image18.png" alt="Vista Secundaria 3D" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent flex items-end p-2">
+          <span id="dioramaSecondaryLabel" class="text-[10px] font-mono-code text-amber-300 font-bold">🌡️ Visión Térmica + RGB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CABECERA ULTRA-LIMPIA IDÉNTICA A @trazomedico (Solo ☰ + Breadcrumb)
+       ========================================================================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 h-16 px-8 flex items-center justify-between pointer-events-none">
+    <!-- Botón Menú ☰ (Abre índice de expositores, guion y pantalla completa) -->
+    <button onclick="toggleMenuDrawer()" class="pointer-events-auto w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white text-xl transition-all" title="Menú de Expositores y Controles (M)">
+      ☰
+    </button>
+
+    <!-- Breadcrumb minimalista centro-derecha (exacto al video) -->
+    <div class="pointer-events-auto flex items-center gap-3 text-xs sm:text-sm text-white/75 font-medium tracking-wide">
+      <span id="headerSectionLabel">Drones Inteligentes en La Libertad 2026</span>
+      <span class="text-emerald-400 font-bold">|</span>
+      <span id="headerSpeakerLabel" class="text-white font-semibold">Ingeniería de Sistemas UCV</span>
+    </div>
+
+    <!-- Indicador discreto de escena y guion -->
+    <div class="pointer-events-auto flex items-center gap-2">
+      <button onclick="toggleScriptModal()" class="px-3 py-1 rounded-full bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-[11px] font-mono-code text-emerald-300 transition-all" title="Ver Guion del Expositor (Tecla G)">
+        🎙️ Guion
+      </button>
+      <button onclick="toggleFullScreen()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white flex items-center justify-center" title="Pantalla Completa (Tecla F)">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MENÚ DESPLEGABLE OCULTO (SE ABRE CON ☰ PARA NO AMONTONAR LA PANTALLA)
+       ========================================================================== -->
+  <div id="menuDrawer" class="fixed top-16 left-8 z-50 w-80 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-white/15 p-4 shadow-2xl hidden">
+    <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+      <span class="text-xs font-mono-code text-emerald-400 font-bold uppercase">Navegación por Expositor</span>
+      <button onclick="toggleMenuDrawer()" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <div class="space-y-1.5 text-xs">
+      <button onclick="goToScene(0); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>01 · Portada Oficial UCV</span><span class="text-emerald-400">Inicio</span></button>
+      <button onclick="goToScene(1); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>02–04 · Exp. 1: Cesar Carranza</span><span class="text-slate-400">Intro / FAO / Perú</span></button>
+      <button onclick="goToScene(4); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>05–08 · Exp. 2: Leyvinis Noriega</span><span class="text-slate-400">COER / Obj / 2023-24</span></button>
+      <button onclick="goToScene(8); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>09–10 · Exp. 3: Pedro Ledezma</span><span class="text-slate-400">2025-26 / Res. OE1</span></button>
+      <button onclick="goToScene(10); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>11–12 · Exp. 4: George Flores</span><span class="text-slate-400">Res. OE2 y OE3</span></button>
+      <button onclick="goToScene(12); toggleMenuDrawer();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-white font-semibold flex justify-between"><span>13–15 · Exp. 5: Jelsin Reyes</span><span class="text-slate-400">Tabla 1 / Discusión</span></button>
+    </div>
+    <div class="mt-3 pt-2 border-t border-white/10 text-[11px] text-slate-400 flex justify-between font-mono-code">
+      <span>Autor: César Quiroz</span>
+      <span>Flechas ← → o Rueda</span>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE GUION DEL EXPOSITOR (OCULTO HASTA PRESIONAR 'G' O EL BOTÓN)
+       ========================================================================== -->
+  <div id="scriptModal" class="fixed bottom-14 right-8 z-50 max-w-md w-full rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-emerald-400/40 p-5 shadow-2xl hidden">
+    <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
+      <span id="scriptSpeakerTitle" class="text-xs font-mono-code text-emerald-400 font-bold uppercase">🎙️ Guion del Expositor</span>
+      <button onclick="toggleScriptModal()" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <p id="scriptBodyText" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+  </div>
+
+  <!-- ==========================================================================
+       CONTENEDOR DE LAS 15 ESCENAS CON COREOGRAFÍA MORPH (@trazomedico)
+       ========================================================================== -->
+  <main id="sceneStage" class="relative w-full h-full z-10">
+
+    <!-- ========================================================================
+         ESCENA 01 (00:01 de @trazomedico): PORTADA CON TÍTULO GIGANTE DETRÁS DEL OBJETO 3D
+         ======================================================================== -->
+    <section class="scene active" data-scene="0" data-hero="right" data-img="./assets/image1.png"
+      data-speaker="Portada Oficial · Grupo TIF Nivel I (Sección B1T1)"
+      data-script="Buenos días/tardes estimado docente Mgtr. Luis Angel De Lucio Burga y compañeros. Presentamos nuestra investigación formativa de Nivel I de la Escuela de Ingeniería de Sistemas de la Universidad César Vallejo: Sistema de información con drones inteligentes para detección temprana de incendios forestales y deforestación en La Libertad 2026, alineada a los ODS 13 y 15.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-7 space-y-5 text-left pr-4">
+          <div class="stagger d-1 inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-orange-600 text-white font-bold text-xs tracking-widest uppercase shadow-lg shadow-orange-600/40">
+            <img src="./assets/docx_image1.png" alt="UCV" class="w-4 h-4 object-contain bg-white rounded-sm p-0.5" />
+            UNIVERSIDAD CÉSAR VALLEJO · INGENIERÍA DE SISTEMAS · TIF NIVEL I
+          </div>
+
+          <h1 class="stagger d-2 title-condensed text-6xl sm:text-7xl xl:text-[5.6rem] font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-emerald-300 to-teal-200 leading-none">
+            DRONES INTELIGENTES
+          </h1>
+
+          <div class="stagger d-3 title-condensed text-2xl sm:text-3xl text-emerald-300 tracking-[0.14em]">
+            DETECCIÓN TEMPRANA DE INCENDIOS FORESTALES Y DEFORESTACIÓN EN LA LIBERTAD 2026
+          </div>
+
+          <p class="stagger d-3 text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
+            Línea de Investigación: <strong class="text-white">Desarrollo de Software y Sistemas de Información</strong> · Aporte directo a los <strong class="text-emerald-300">ODS 13 (Acción por el Clima)</strong> y <strong class="text-emerald-300">ODS 15 (Ecosistemas Terrestres)</strong>.
+          </p>
+
+          <!-- Tarjetas de los 5 Integrantes Limpias -->
+          <div class="stagger d-4 pt-2 space-y-2">
+            <div class="text-xs font-mono-code text-emerald-400 uppercase font-bold">👥 EQUIPO EXPOSITOR (CLIC PARA IR A SU SECCIÓN)</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+              <button onclick="goToScene(1)" class="p-2.5 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-left transition-all"><span class="text-emerald-400 font-bold">1.</span> Cesar Carranza</button>
+              <button onclick="goToScene(4)" class="p-2.5 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-left transition-all"><span class="text-emerald-400 font-bold">2.</span> Leyvinis Noriega</button>
+              <button onclick="goToScene(8)" class="p-2.5 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-left transition-all"><span class="text-emerald-400 font-bold">3.</span> Pedro Ledezma</button>
+              <button onclick="goToScene(10)" class="p-2.5 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-left transition-all"><span class="text-emerald-400 font-bold">4.</span> George Flores</button>
+              <button onclick="goToScene(12)" class="p-2.5 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 text-left transition-all"><span class="text-emerald-400 font-bold">5.</span> Jelsin Reyes</button>
+              <div class="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-200 font-semibold">🎓 Mgtr. Luis De Lucio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 02 (00:06 de @trazomedico): 4 TARJETAS DE COLOR CON ICONO CIRCULAR SUPERIOR
+         ======================================================================== -->
+    <section class="scene" data-scene="1" data-hero="bg-blur" data-img="./assets/image3.png"
+      data-speaker="Expositor 1 · Cesar Carranza (I. Introducción)"
+      data-script="En la introducción contrastamos la realidad observada frente a la solución deseada desde la Ingeniería de Sistemas: el cambio climático prolonga las sequías e inflama los bosques reduciendo la absorción de CO2. Hoy la vigilancia depende de rondas a pie o satélites bloqueados por nubes. Proponemos un sistema con drones inteligentes que integra tres componentes informáticos: visión artificial contra falsos positivos, redes de baja latencia y base de datos georreferenciada, aportando a los ODS 13 y 15.">
+      <div class="w-full max-w-6xl mx-auto space-y-12">
+        <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-center text-white">
+          REALIDAD ACTUAL Y PROPUESTA IA
+        </h2>
+
+        <!-- 4 Tarjetas idénticas a 'GRUPOS DE RIESGO' (00:06) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+          <div class="stagger d-1 risk-card bg-gradient-to-b from-orange-600 to-red-700">
+            <div class="risk-card-icon bg-orange-500 text-3xl">🌡️</div>
+            <h3 class="font-bold text-lg text-white">Cambio Climático</h3>
+            <p class="text-xs text-orange-100 mt-2 leading-relaxed">
+              Sequías prolongadas inflaman bosques y pastizales, reduciendo la absorción de $\text{CO}_2$ y liberando más gases de efecto invernadero.
+            </p>
+          </div>
+
+          <div class="stagger d-2 risk-card bg-gradient-to-b from-amber-600 to-orange-700">
+            <div class="risk-card-icon bg-amber-500 text-3xl">🛰️</div>
+            <h3 class="font-bold text-lg text-white">Vigilancia Lenta</h3>
+            <p class="text-xs text-amber-100 mt-2 leading-relaxed">
+              Rondas humanas a pie, avisos telefónicos tardíos y satélites que demoran horas y quedan bloqueados por nubes o neblina.
+            </p>
+          </div>
+
+          <div class="stagger d-3 risk-card bg-gradient-to-b from-emerald-600 to-teal-800">
+            <div class="risk-card-icon bg-emerald-500 text-3xl">🚁</div>
+            <h3 class="font-bold text-lg text-white">Visión Artificial IA</h3>
+            <p class="text-xs text-emerald-100 mt-2 leading-relaxed">
+              Drones bajo las nubes con algoritmos que reconocen conatos de fuego y claros de tala sin confundir neblina ni sol.
+            </p>
+          </div>
+
+          <div class="stagger d-4 risk-card bg-gradient-to-b from-teal-600 to-cyan-800">
+            <div class="risk-card-icon bg-teal-500 text-3xl">📡</div>
+            <h3 class="font-bold text-lg text-white">Alerta y Mapas GIS</h3>
+            <p class="text-xs text-teal-100 mt-2 leading-relaxed">
+              Notificación web/móvil en segundos con coordenadas GPS y base de datos para mapas de calor (<strong>ODS 13 y ODS 15</strong>).
+            </p>
+          </div>
+        </div>
+
+        <!-- Nota inferior con icono ⓘ idéntica a 00:06 -->
+        <div class="stagger d-5 max-w-3xl mx-auto flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-slate-200">
+          <span class="w-6 h-6 rounded-full bg-white text-slate-950 font-bold flex items-center justify-center shrink-0">i</span>
+          <span><strong>Justificación en Ingeniería de Sistemas:</strong> Integra procesamiento de imágenes, redes de comunicación de baja demora y base de datos espacial para actuar en los primeros minutos del incendio.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 03 (00:08 de @trazomedico): OBJETO 3D A LA DERECHA + 3 BARRAS LUMINOSAS A LA IZQUIERDA
+         ======================================================================== -->
+    <section class="scene" data-scene="2" data-hero="right" data-img="./assets/image9.png"
+      data-speaker="Expositor 1 · Cesar Carranza (Estadística Mundial FAO / WRI)"
+      data-script="A nivel internacional, la FAO (2025) reporta que el planeta posee 4 140 millones de hectáreas de bosques, pero pierde 10,9 millones de hectáreas por año por deforestación y 261 millones de hectáreas anuales son afectadas por el fuego. Asimismo, Goldman et al. (2026) para el World Resources Institute (WRI) y el laboratorio GLAD de la Universidad de Maryland revelaron que en 2025 se perdieron 25,5 millones de hectáreas de cobertura arbórea, incluidos 4,3 millones de bosques primarios tropicales, equivalentes a más de 11 campos de fútbol por minuto, siendo los incendios responsables del 42 % de toda esa pérdida.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            EVIDENCIA ESTADÍSTICA MUNDIAL
+          </h2>
+
+          <ul class="stagger d-2 space-y-2 text-sm sm:text-base text-slate-200">
+            <li>• <strong>FAO (2025):</strong> De las <strong>4 140 millones de ha</strong> de bosques del planeta, el fuego afecta <strong>261 millones de ha</strong> cada año.</li>
+            <li>• <strong>Goldman et al. (2026) · WRI &amp; GLAD:</strong> Las olas de calor quemaron el doble de árboles que hace dos décadas (<strong>&gt; 11 campos de fútbol/minuto</strong>).</li>
+          </ul>
+
+          <!-- 3 Barras Horizontales con Borde Luminoso (idénticas a 00:08) -->
+          <div class="space-y-3.5 pt-2">
+            <div class="stagger d-3 glow-bar flex items-center justify-between">
+              <span class="font-semibold text-base text-white">Deforestación anual sostenida 2015–2025 (FAO, 2025)</span>
+              <span class="font-mono-code font-bold text-xl text-emerald-400">10,9 M ha/año</span>
+            </div>
+
+            <div class="stagger d-4 glow-bar flex items-center justify-between">
+              <span class="font-semibold text-base text-white">Cobertura arbórea perdida en 2025 · 4,3 M ha primarias (WRI, 2026)</span>
+              <span class="font-mono-code font-bold text-xl text-amber-300">25,5 M ha</span>
+            </div>
+
+            <div class="stagger d-5 glow-bar flex items-center justify-between">
+              <span class="font-semibold text-base text-white">Pérdida mundial de árboles causada directamente por incendios</span>
+              <span class="font-mono-code font-bold text-xl text-orange-400">42 % del total</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 04 (00:10 de @trazomedico): OBJETO 3D VIAJA A LA IZQUIERDA + TEXTO A LA DERECHA
+         ======================================================================== -->
+    <section class="scene" data-scene="3" data-hero="left" data-img="./assets/image12.png"
+      data-speaker="Expositor 1 · Cesar Carranza (Estadística Nacional en Perú)"
+      data-script="En el Perú, Goldman et al. (2026) nos ubican entre los diez países del mundo con mayor pérdida de bosques primarios tropicales. Respecto a los incendios, el INDECI (2024), mediante el COEN y la plataforma SINPAD, registró 1 754 incendios forestales en 2024, con un pico crítico de 840 emergencias en septiembre, destruyendo 63 710,38 hectáreas naturales y 14 971,57 hectáreas de cultivos, además de 285 heridos y 35 fallecidos. Según la Defensoría del Pueblo (Informe n.° 225) y el SERFOR, el 95 % de estos siniestros son causados por actividades humanas.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-5"></div>
+        <div class="lg:col-span-7 space-y-5 text-left lg:pl-8">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            ESCENARIO CRÍTICO EN EL PERÚ
+          </h2>
+
+          <p class="stagger d-2 text-base text-emerald-300 font-semibold">
+            El Perú figura entre los <strong>10 países del mundo con mayor pérdida de bosque primario tropical</strong> por ampliación agrícola, pasturas y actividades extractivas (Goldman et al., 2026):
+          </p>
+
+          <div class="stagger d-3 space-y-4 text-sm sm:text-base text-slate-200 leading-relaxed">
+            <div class="p-4 rounded-2xl bg-white/5 border-l-4 border-l-orange-500">
+              • <strong>Reporte INDECI / COEN-SINPAD (2024):</strong> Se registraron <strong>1 754 incendios forestales</strong> a nivel nacional (septiembre fue el mes más crítico con <strong>840 emergencias</strong>), destruyendo <strong>63 710,38 ha</strong> de cobertura natural y <strong>14 971,57 ha</strong> de cultivo, dejando <strong>285 heridos y 35 fallecidos</strong>.
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white/5 border-l-4 border-l-emerald-400">
+              • <strong>Defensoría del Pueblo (2024, Informe n.° 225) y SERFOR:</strong> Cerca del <strong>95 % de los incendios en el país</strong> son originados por actividades humanas, principalmente por la <strong>quema tradicional de rastrojos y pastos secos</strong> para abrir chacras, agravada por el viento y la sequía andina.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 05 (00:11 de @trazomedico): OBJETO 3D A LA DERECHA + 2 TARJETAS BLANCAS NUMERADAS 1 Y 2
+         ======================================================================== -->
+    <section class="scene" data-scene="4" data-hero="right" data-img="./assets/image10.png"
+      data-speaker="Expositor 2 · Leyvinis Noriega (Problemática en La Libertad - COER)"
+      data-script="A nivel local, en la región La Libertad, el COER difundido por Agraria.pe (2024) reportó más de 42 incendios forestales en una sola temporada crítica, destruyendo 2 990 hectáreas de pastizales naturales, bosques de eucalipto y pino, y cultivos de trigo, cebada y tarwi, además de afectar 41 viviendas y ganado. La provincia más golpeada fue Santiago de Chuco con más de 1 000 hectáreas consumidas, seguida por Otuzco, Sánchez Carrión, Bolívar y Pataz, destruyendo los colchones naturales de agua en las cabeceras de cuenca.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            IMPACTO EN LA SIERRA LIBERTEÑA
+          </h2>
+
+          <!-- Tarjeta Blanca 1 con chapita roja '1' a la izquierda (exacta a 00:11) -->
+          <div class="stagger d-2 white-step-card mr-8">
+            <div class="step-badge bg-orange-600 left-6">1</div>
+            <p class="text-sm sm:text-base leading-relaxed pt-1">
+              Según el <strong>COER La Libertad (Agraria.pe, 2024)</strong>, se registraron <strong>+42 incendios forestales</strong> en una temporada crítica, destruyendo <strong>2 990 hectáreas</strong> entre pastizales de ichu, bosques de <strong>eucalipto y pino</strong>, y cultivos de <strong>trigo, cebada y tarwi</strong>, con <strong>41 viviendas afectadas</strong> y pérdida de ganado.
+            </p>
+          </div>
+
+          <!-- Tarjeta Blanca 2 desplazada con chapita azul/verde '2' a la derecha (exacta a 00:11) -->
+          <div class="stagger d-3 white-step-card ml-10">
+            <div class="step-badge bg-emerald-600 right-6">2</div>
+            <p class="text-sm sm:text-base leading-relaxed pt-1">
+              La provincia más golpeada fue <strong>Santiago de Chuco (+1 000 ha quemadas)</strong>, seguida por <strong>Otuzco, Sánchez Carrión, Bolívar y Pataz</strong>. Esto destruye los <strong>colchones naturales de agua en las cabeceras de cuenca</strong> que abastecen a los valles liberteños y erosiona el suelo agrícola.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 06 (00:13 de @trazomedico): 4 PÍLDORAS 2x2 CON MEDALLÓN CIRCULAR LATERAL
+         ======================================================================== -->
+    <section class="scene" data-scene="5" data-hero="right-edge" data-img="./assets/image11.png"
+      data-speaker="Expositor 2 · Leyvinis Noriega (Problema y Objetivos - Anexo 1)"
+      data-script="Por ello planteamos nuestro Problema General: ¿De qué manera la implementación de un sistema de información con drones inteligentes influye en el tiempo de detección temprana de incendios forestales y deforestación en zonas vulnerables de La Libertad durante el año 2026? Nuestro Objetivo General es determinar su impacto en optimizar los tiempos de detección y reporte. Y definimos tres objetivos específicos: medir la exactitud y margen de error frente a falsos positivos; comparar el tiempo de transmisión y procesamiento frente a la vigilancia tradicional; y evaluar la eficiencia en el almacenamiento del historial georreferenciado para mapas de calor.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-9 space-y-8">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            PROBLEMA Y OBJETIVOS DE INVESTIGACIÓN
+          </h2>
+
+          <!-- Cuadrícula 2x2 de tarjetas blancas con medallón circular a la derecha (idéntica a 00:13) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 pr-6">
+            <div class="stagger d-2 entry-pill-card">
+              <div class="text-xs font-bold uppercase text-orange-600">Problema General</div>
+              <p class="text-xs sm:text-sm font-medium mt-1">
+                ¿Cómo influye el sistema con drones inteligentes en el <strong>tiempo de detección temprana</strong> en zonas vulnerables de La Libertad 2026?
+              </p>
+              <div class="entry-medallion bg-orange-500 text-white text-2xl">❓</div>
+            </div>
+
+            <div class="stagger d-3 entry-pill-card">
+              <div class="text-xs font-bold uppercase text-amber-600">Objetivo General</div>
+              <p class="text-xs sm:text-sm font-medium mt-1">
+                Determinar el impacto del sistema en <strong>optimizar los tiempos de detección temprana y reporte</strong> de incendios y deforestación.
+              </p>
+              <div class="entry-medallion bg-amber-500 text-white text-2xl">🎯</div>
+            </div>
+
+            <div class="stagger d-4 entry-pill-card">
+              <div class="text-xs font-bold uppercase text-emerald-700">Objetivos Específicos 1 y 2</div>
+              <p class="text-xs sm:text-sm font-medium mt-1">
+                <strong>OE1:</strong> Medir exactitud vs. falsos positivos (sol/neblina).<br/>
+                <strong>OE2:</strong> Comparar tiempo de transmisión frente al satélite.
+              </p>
+              <div class="entry-medallion bg-emerald-500 text-white text-2xl">⚡</div>
+            </div>
+
+            <div class="stagger d-5 entry-pill-card">
+              <div class="text-xs font-bold uppercase text-teal-700">Objetivo Específico 3</div>
+              <p class="text-xs sm:text-sm font-medium mt-1">
+                <strong>OE3:</strong> Evaluar la eficiencia en estructurar el <strong>historial georreferenciado</strong> para proyectar <strong>mapas de calor</strong>.
+              </p>
+              <div class="entry-medallion bg-teal-500 text-white text-2xl">🗺️</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 07 (00:15 de @trazomedico): 4 MEDALLONES ARRIBA + TÍTULO + 2 TARJETAS BLANCAS
+         ======================================================================== -->
+    <section class="scene" data-scene="6" data-hero="bg-blur" data-img="./assets/image3.png"
+      data-speaker="Expositor 2 · Leyvinis Noriega (Análisis Crítico de Bases Teóricas)"
+      data-script="Al analizar críticamente los marcos teóricos de los 7 artículos indexados entre 2023 y 2026, identificamos el paso de una vigilancia pasiva hacia el monitoreo aéreo activo con IA a bordo del dron. Sin embargo, descubrimos una brecha teórica fundamental: la literatura estudia los incendios forestales (con redes YOLO) y la deforestación (con redes U-Net y VGG16) como si fueran problemas separados, cuando en los Andes peruanos el desmonte y las quemas agrícolas ocurren al mismo tiempo para abrir chacras, demostrando la necesidad de unir ambas funciones en un solo sistema.">
+      <div class="w-full max-w-5xl mx-auto text-center space-y-6">
+        <!-- Los 4 medallones de la escena anterior ahora alineados arriba al centro (exacto a 00:15) -->
+        <div class="stagger d-1 flex items-center justify-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-2xl shadow-lg">❓</div>
+          <div class="w-14 h-14 rounded-full bg-amber-500 flex items-center justify-center text-2xl shadow-lg">🎯</div>
+          <div class="w-14 h-14 rounded-full bg-emerald-500 flex items-center justify-center text-2xl shadow-lg">⚡</div>
+          <div class="w-14 h-14 rounded-full bg-teal-500 flex items-center justify-center text-2xl shadow-lg">🗺️</div>
+        </div>
+
+        <h2 class="stagger d-2 title-condensed text-5xl sm:text-6xl text-white">
+          ANÁLISIS DE MARCOS TEÓRICOS (2023–2026)
+        </h2>
+
+        <p class="stagger d-3 text-sm sm:text-base text-slate-200 max-w-2xl mx-auto">
+          En la revisión documental e informativa de los 7 estudios indexados en <strong>Scopus / SJR (Q1/Q2)</strong> se identificó una tendencia clara y un <strong>vacío teórico en los Andes</strong>:
+        </p>
+
+        <!-- 2 Tarjetas blancas lado a lado (exactas a 00:15) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left pt-2">
+          <div class="stagger d-4 white-step-card">
+            <h3 class="font-bold text-lg text-emerald-800 mb-2">1. Arquitecturas Especializadas</h3>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              Los estudios de incendios (<em>Saydirasulovich, Shamta, Yun, Luo, Ma</em>) coinciden en usar redes de una sola etapa <strong>YOLOv5, YOLOv8 y YOLO11</strong> para video en tiempo real; mientras que en deforestación (<em>Md Jelas, Borse</em>) usan segmentación semántica <strong>U-Net, DeepLabV3+ y VGG16</strong> con coordenadas espaciales.
+            </p>
+          </div>
+
+          <div class="stagger d-5 white-step-card">
+            <h3 class="font-bold text-lg text-orange-700 mb-2">2. Brecha Teórica en los Andes Peruanos</h3>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              La literatura estudió los incendios y la tala como <strong>dos problemas separados con programas distintos</strong>; pero en el Perú (<em>Defensoría, 2024; Agraria.pe, 2024</em>) <strong>la tala/desmonte y las quemas agrícolas ocurren al mismo tiempo</strong>, exigiendo unificarlos en un solo sistema de información.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 08 (00:17 de @trazomedico): CARRUSEL DE CRISTAL (ANTECEDENTES 2023–2024)
+         ======================================================================== -->
+    <section class="scene" data-scene="7" data-hero="bg-blur" data-img="./assets/image11.png"
+      data-speaker="Expositor 2 · Leyvinis Noriega (Antecedentes 2023–2024)"
+      data-script="Revisando cronológicamente los antecedentes de 2023 y 2024: Primero, Norkobil Saydirasulovich et al. (2023) en Sensors modificaron YOLOv8 con atención BiFormer y convoluciones GSConv para detectar humo temprano desde drones, logrando 79,4 % AP (71,3 % en humo pequeño y 92,6 % en grande). Segundo, Md Jelas et al. (2024) en Frontiers evaluaron 22 estudios con U-Net y DeepLabV3+, alcanzando entre 92,78 % y 98,14 % de exactitud al segmentar tala, superando el 98 % con drones en la Amazonía peruana. Tercero, Shamta y Demir (2024) en PLOS ONE construyeron un cuadricóptero con NVIDIA Jetson Nano, Raspberry Pi y GSM, logrando 96 % en clasificación y 89 % en vuelo real.">
+      <div class="w-full max-w-6xl mx-auto text-center space-y-6">
+        <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+          ANTECEDENTES CIENTÍFICOS (2023–2024)
+        </h2>
+
+        <div class="relative flex items-center justify-center gap-5 pt-4">
+          <!-- Botón de flecha de carrusel (como el « de 00:17) -->
+          <button onclick="goToScene(8)" class="hidden lg:flex w-11 h-11 rounded-full bg-white/10 hover:bg-emerald-500 text-white items-center justify-center text-xl font-bold transition-all shrink-0" title="Deslizar hacia estudios 2025–2026">
+            «
+          </button>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <!-- Card 1 -->
+            <div class="stagger d-2 space-y-3">
+              <div class="text-3xl text-emerald-300">💨</div>
+              <div class="frost-carousel-card text-left">
+                <div class="text-xs font-mono-code text-amber-300 font-bold">Sensors (2023) · Q1/Q2</div>
+                <div class="font-bold text-base text-white mt-0.5">Saydirasulovich et al.</div>
+                <div class="h-36 rounded-xl overflow-hidden my-3 border border-white/20">
+                  <img src="./assets/image10.png" alt="Saydirasulovich 2023" class="w-full h-full object-cover" />
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                  <strong>YOLOv8 + BiFormer + GSConv:</strong> Logra <strong>79,4 % AP</strong> en humo (+3,3 % sobre base), con <strong>71,3 %</strong> en focos pequeños y <strong>92,6 %</strong> en columnas grandes.
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="stagger d-3 space-y-3">
+              <div class="text-3xl text-emerald-300">🌲</div>
+              <div class="frost-carousel-card text-left">
+                <div class="text-xs font-mono-code text-emerald-300 font-bold">Frontiers (2024) · Q1</div>
+                <div class="font-bold text-base text-white mt-0.5">Md Jelas et al. (22 estudios)</div>
+                <div class="h-36 rounded-xl overflow-hidden my-3 border border-white/20">
+                  <img src="./assets/image9.png" alt="Md Jelas 2024" class="w-full h-full object-cover" />
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                  <strong>U-Net con atención y DeepLabV3+:</strong> Logra <strong>92,78 % a 98,14 %</strong> de exactitud separando bosque sano de tala (<strong>&gt;98 % con drones en la Amazonía peruana</strong>).
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="stagger d-4 space-y-3">
+              <div class="text-3xl text-emerald-300">🚁</div>
+              <div class="frost-carousel-card text-left">
+                <div class="text-xs font-mono-code text-cyan-300 font-bold">PLOS ONE (2024) · Q1</div>
+                <div class="font-bold text-base text-white mt-0.5">Shamta y Demir (Hardware)</div>
+                <div class="h-36 rounded-xl overflow-hidden my-3 border border-white/20">
+                  <img src="./assets/image11.png" alt="Shamta y Demir 2024" class="w-full h-full object-cover" />
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                  Dron cuadricóptero + <strong>NVIDIA Jetson Nano + Raspberry Pi + GSM</strong>. <strong>96 % exactitud</strong> (CNN-RCNN/YOLOv8) y <strong>89 % en vuelo real</strong> (~25 min batería).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 09 (00:18–00:19 de @trazomedico): CARRUSEL DESLIZADO (ANTECEDENTES 2025–2026)
+         ======================================================================== -->
+    <section class="scene" data-scene="8" data-hero="bg-blur" data-img="./assets/image16.png"
+      data-speaker="Expositor 3 · Pedro Ledezma (Antecedentes 2025–2026)"
+      data-script="Avanzando en el carrusel hacia los estudios de 2025 y 2026: Yun et al. (2025) en Fire mejoraron YOLOv8 con SPDConv y atención MLCA en más de 3 200 fotos aéreas, subiendo la sensibilidad en 5,5 % y reduciendo los parámetros en 43,8 % (5,96 M). Luo et al. (2025) en Forests crearon YOLO-UFS con MobileNetV4 y muestras negativas de sol, neblina y hojas rojas, logrando 91,3 % mAP y reduciendo el peso en más de 74 % (7,4 MB a 30 FPS en Jetson Nano). Borse et al. (2025) en PLOS ONE evaluaron 10 400 árboles a menos de 10 cm/píxel con GeoJSON, logrando 98,39 % con VGG16 y AUC 0,95 con YOLOv8. Y Ma et al. (2026) en Sustainability crearon AHE-YOLO (YOLO11) en 5 118 fotos, logrando 94,8 % mAP, 3,5 MB y 333,3 FPS.">
+      <div class="w-full max-w-6xl mx-auto text-center space-y-6">
+        <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+          ANTECEDENTES CIENTÍFICOS (2025–2026)
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 pt-2">
+          <!-- Card 4 -->
+          <div class="stagger d-1 space-y-2">
+            <div class="text-2xl">🔥</div>
+            <div class="frost-carousel-card text-left">
+              <div class="text-[11px] font-mono-code text-orange-300 font-bold">Fire (2025) · Yun et al.</div>
+              <div class="h-28 rounded-xl overflow-hidden my-2.5 border border-white/20">
+                <img src="./assets/image12.png" alt="Yun 2025" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>YOLOv8 + SPDConv + MLCA</strong> (&gt;3 200 fotos). Sube sensibilidad <strong>+5,5 %</strong> y reduce parámetros en <strong>43,8 % (5,96 M)</strong> para focos tras ramas.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="stagger d-2 space-y-2">
+            <div class="text-2xl">🌤️</div>
+            <div class="frost-carousel-card text-left">
+              <div class="text-[11px] font-mono-code text-emerald-300 font-bold">Forests (2025) · Luo et al.</div>
+              <div class="h-28 rounded-xl overflow-hidden my-2.5 border border-white/20">
+                <img src="./assets/image3.png" alt="Luo 2025" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>YOLO-UFS (MobileNetV4 + BiFPN)</strong> entrenado con neblina y sol. <strong>91,3 % mAP</strong>, <strong>-74 % peso (7,4 MB)</strong> a <strong>30 FPS en Jetson Nano</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="stagger d-3 space-y-2">
+            <div class="text-2xl">🗺️</div>
+            <div class="frost-carousel-card text-left">
+              <div class="text-[11px] font-mono-code text-cyan-300 font-bold">PLOS ONE (2025) · Borse et al.</div>
+              <div class="h-28 rounded-xl overflow-hidden my-2.5 border border-white/20">
+                <img src="./assets/image17.png" alt="Borse 2025" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>AETDA (VGG16 + YOLOv8)</strong> en <strong>10 400+ árboles (&lt;10 cm/px)</strong>. Logra <strong>98,39 % exactitud</strong>, <strong>AUC 0,95</strong> y archivos <strong>GeoJSON</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 7 -->
+          <div class="stagger d-4 space-y-2">
+            <div class="text-2xl">⚡</div>
+            <div class="frost-carousel-card text-left">
+              <div class="text-[11px] font-mono-code text-teal-300 font-bold">Sustainability (2026) · Ma et al.</div>
+              <div class="h-28 rounded-xl overflow-hidden my-2.5 border border-white/20">
+                <img src="./assets/image16.png" alt="Ma 2026" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>AHE-YOLO (YOLO11 + ADown + EMBC)</strong> en <strong>5 118 fotos</strong> día/noche. <strong>94,8 % mAP</strong>, <strong>85,1 % recall</strong>, solo <strong>3,5 MB</strong> y <strong>333,3 FPS</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 10 (00:08 style): OBJETO 3D A LA DERECHA + BARRAS ANIMADAS OE1 A LA IZQUIERDA
+         ======================================================================== -->
+    <section class="scene" data-scene="9" data-hero="right" data-img="./assets/image12.png"
+      data-speaker="Expositor 3 · Pedro Ledezma (Resultados Objetivo Específico 1: Exactitud IA)"
+      data-script="En los resultados del Objetivo Específico 1, medimos la tasa de exactitud y el margen de error frente a falsos positivos. Saydirasulovich (2023) alcanzó 79,4 % AP, pero en humo pequeño bajó a 71,3 % dejando 28,7 % de margen de error ante nubes bajas. Luo et al. (2025) entrenaron YOLO-UFS con muestras negativas de reflejos solares, neblina matutina y hojas rojizas subiendo a 91,3 % mAP. Ma et al. (2026) lograron 94,8 % mAP con AHE-YOLO11 en 5 118 imágenes día/noche; Shamta y Demir (2024) alcanzaron 96 % en clasificación y 89 % en vuelo; y Md Jelas (2024) junto a Borse (2025) llegaron hasta 98,14 % y 98,39 % en detección de tala y conteo arbóreo.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-8 space-y-4">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            RESULTADOS OE1: EXACTITUD VS. FALSOS POSITIVOS
+          </h2>
+          <p class="stagger d-2 text-xs sm:text-sm text-slate-300">
+            Para evitar falsas alarmas en la sierra liberteña es indispensable añadir <strong>filtros de atención visual y entrenar con muestras negativas reales de neblina matutina y brillo solar</strong>:
+          </p>
+
+          <div class="space-y-3 pt-1">
+            <div class="stagger d-2 glow-bar">
+              <div class="flex justify-between text-xs sm:text-sm font-semibold mb-1.5">
+                <span>Saydirasulovich et al. (2023) · YOLOv8 + BiFormer (71,3 % humo pequeño → 28,7 % error)</span>
+                <span class="font-mono-code text-amber-300 font-bold">79,4 % AP</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden"><div class="bar-fill h-full bg-amber-400 rounded-full" data-width="79.4%"></div></div>
+            </div>
+
+            <div class="stagger d-3 glow-bar">
+              <div class="flex justify-between text-xs sm:text-sm font-semibold mb-1.5">
+                <span>Luo et al. (2025) · YOLO-UFS (+3,8 % filtrando neblina matutina, sol y hojas rojizas)</span>
+                <span class="font-mono-code text-emerald-300 font-bold">91,3 % mAP</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden"><div class="bar-fill h-full bg-emerald-400 rounded-full" data-width="91.3%"></div></div>
+            </div>
+
+            <div class="stagger d-4 glow-bar">
+              <div class="flex justify-between text-xs sm:text-sm font-semibold mb-1.5">
+                <span>Ma et al. (2026) · AHE-YOLO11 (85,1 % sensibilidad en 5 118 fotos día/noche; Yun: +5,5 %)</span>
+                <span class="font-mono-code text-teal-300 font-bold">94,8 % mAP</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden"><div class="bar-fill h-full bg-teal-400 rounded-full" data-width="94.8%"></div></div>
+            </div>
+
+            <div class="stagger d-5 glow-bar">
+              <div class="flex justify-between text-xs sm:text-sm font-semibold mb-1.5">
+                <span>Shamta y Demir (2024) · CNN-RCNN / YOLOv8 (89 % detección directa en vuelo real)</span>
+                <span class="font-mono-code text-orange-400 font-bold">96,0 % Exactitud</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden"><div class="bar-fill h-full bg-orange-400 rounded-full" data-width="96.0%"></div></div>
+            </div>
+
+            <div class="stagger d-5 glow-bar">
+              <div class="flex justify-between text-xs sm:text-sm font-semibold mb-1.5">
+                <span>Md Jelas (2024) y Borse (2025) · U-Net (&gt;98 % Amazonía Perú) y VGG16 (10 400 árboles)</span>
+                <span class="font-mono-code text-emerald-300 font-bold">98,39 % Exactitud</span>
+              </div>
+              <div class="w-full h-2.5 bg-white/10 rounded-full overflow-hidden"><div class="bar-fill h-full bg-gradient-to-r from-emerald-400 to-cyan-300 rounded-full" data-width="98.39%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 11 (00:22 de @trazomedico): 4 TARJETAS CON ICONO SUPERIOR (RESULTADOS OE2)
+         ======================================================================== -->
+    <section class="scene" data-scene="10" data-hero="bg-blur" data-img="./assets/image16.png"
+      data-speaker="Expositor 4 · George Flores (Resultados Objetivo Específico 2: Velocidad y Peso)"
+      data-script="Respecto al Objetivo Específico 2 sobre tiempo de transmisión y procesamiento: mientras que los avisos telefónicos o el paso satelital tardan horas, Shamta y Demir (2024) demostraron que procesar el video a bordo del dron con NVIDIA Jetson Nano y Raspberry Pi envía la alerta con GPS por red GSM en segundos. Yun et al. (2025) bajaron los parámetros en 43,8 % (5,96 M); Luo et al. (2025) redujeron el peso computacional en más de 74 % llegando a 7,4 MB y 30 FPS reales en Jetson Nano; y Ma et al. (2026) comprimieron su modelo a 3,5 MB y 333,3 FPS. No obstante, advertimos críticamente que los 30 FPS de Luo se midieron en minicomputadoras reales de dron, mientras que los 333,3 FPS de Ma se midieron en GPUs potentes de laboratorio.">
+      <div class="w-full max-w-6xl mx-auto space-y-10">
+        <div class="text-center space-y-1">
+          <div class="stagger d-1 text-sm font-bold tracking-widest text-emerald-400 uppercase">OBJETIVO ESPECÍFICO 2 · LATENCIA Y PROCESAMIENTO EN EL BORDE</div>
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            COMPRESIÓN DE IA Y TIEMPO DE RESPUESTA
+          </h2>
+        </div>
+
+        <!-- 4 Tarjetas en fila idénticas a 'MANIFESTACIONES CARDIACAS' (00:22) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+          <div class="stagger d-1 risk-card bg-gradient-to-b from-teal-600 to-emerald-800">
+            <div class="risk-card-icon bg-teal-500 text-2xl font-mono-code font-bold">-44%</div>
+            <h3 class="font-bold text-lg text-white">Yun et al. (2025)</h3>
+            <p class="text-xs text-teal-100 mt-2 leading-relaxed">
+              Reduce <strong>43,8 % de parámetros (5,96 M)</strong> y <strong>43,3 % de peso</strong> de archivo con atención MLCA sin sobrecargar el procesador del dron.
+            </p>
+          </div>
+
+          <div class="stagger d-2 risk-card bg-gradient-to-b from-emerald-600 to-green-800">
+            <div class="risk-card-icon bg-emerald-500 text-xl font-mono-code font-bold">7,4MB</div>
+            <h3 class="font-bold text-lg text-white">Luo et al. (2025)</h3>
+            <p class="text-xs text-emerald-100 mt-2 leading-relaxed">
+              Reducción <strong>&gt; 74 % del peso computacional</strong> con bloques MobileNetV4, corriendo fluido a <strong>30 FPS reales en placa Jetson Nano</strong>.
+            </p>
+          </div>
+
+          <div class="stagger d-3 risk-card bg-gradient-to-b from-amber-500 to-orange-700">
+            <div class="risk-card-icon bg-amber-500 text-xl font-mono-code font-bold">3,5MB</div>
+            <h3 class="font-bold text-lg text-white">Ma et al. (2026)</h3>
+            <p class="text-xs text-amber-100 mt-2 leading-relaxed">
+              Comprime <strong>AHE-YOLO11</strong> a solo <strong>3,5 MB (1,56 M parámetros)</strong> alcanzando <strong>333,3 FPS (+16,5 %)</strong> en laboratorio.
+            </p>
+          </div>
+
+          <div class="stagger d-4 risk-card bg-gradient-to-b from-orange-600 to-red-700">
+            <div class="risk-card-icon bg-orange-500 text-2xl">⚡</div>
+            <h3 class="font-bold text-lg text-white">Shamta y Demir</h3>
+            <p class="text-xs text-orange-100 mt-2 leading-relaxed">
+              Envía <strong>solo foto de alerta + GPS por red GSM en segundos</strong> frente a las horas que tardan los satélites o rondas a pie.
+            </p>
+          </div>
+        </div>
+
+        <!-- Nota crítica inferior idéntica a 00:22 -->
+        <div class="stagger d-5 max-w-4xl mx-auto flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-slate-200">
+          <span class="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-bold flex items-center justify-center shrink-0">i</span>
+          <span><strong>Crítica Metodológica del Informe:</strong> Mientras Luo et al. (2025) y Shamta y Demir (2024) midieron <strong>30 FPS en minicomputadoras Jetson Nano reales montadas en drones</strong>, los <strong>333,3 FPS de Ma et al. (2026)</strong> se midieron en tarjetas gráficas potentes de laboratorio.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 12 (00:24 de @trazomedico): CARRUSEL DE FOTOS CIRCULARES (RESULTADOS OE3)
+         ======================================================================== -->
+    <section class="scene" data-scene="11" data-hero="bg-blur" data-img="./assets/image17.png"
+      data-speaker="Expositor 4 · George Flores (Resultados Objetivo Específico 3: Geodatos GIS)"
+      data-script="En el Objetivo Específico 3 evaluamos la eficiencia del almacenamiento georreferenciado para mapas de calor. Md Jelas et al. (2024) demostraron que U-Net y DeepLabV3+ logran entre 92,78 % y 98,14 % de exactitud separando píxel por píxel bosque sano de terreno talado, superando el 98 % con drones en la Amazonía peruana y reduciendo semanas de trabajo manual a minutos. Borse et al. (2025) probaron en más de 10 400 árboles que cruzar fotos de dron de menos de 10 cm/píxel con archivos GeoJSON y Shapefiles alcanza 98,39 % con VGG16 y AUC 0,95 con YOLOv8. Guardar puntos y polígonos ligeros en GeoJSON es mucho más eficiente que guardar videos pesados.">
+      <div class="w-full max-w-6xl mx-auto text-center space-y-6">
+        <div class="space-y-1">
+          <div class="stagger d-1 text-sm font-bold tracking-widest text-emerald-400 uppercase">OBJETIVO ESPECÍFICO 3 · ALMACENAMIENTO ESPACIAL Y DEFORESTACIÓN</div>
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            HISTORIAL GEORREFERENCIADO Y <span class="text-orange-400">GEOJSON</span>
+          </h2>
+        </div>
+
+        <!-- 3 Tarjetas de Cristal con imagen circular adentro (idénticas a 00:24) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-7 pt-2">
+          <div class="stagger d-2 space-y-3">
+            <div class="text-3xl">🔍</div>
+            <div class="frost-carousel-card text-center">
+              <h3 class="font-bold text-base text-white">Resolución &lt; 10 cm/píxel</h3>
+              <div class="w-40 h-40 mx-auto my-4 rounded-full overflow-hidden border-2 border-emerald-400/60 shadow-lg">
+                <img src="./assets/image17.png" alt="Copas de árboles" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>Borse et al. (2025):</strong> Supera los 1–5 m/píxel del satélite en <strong>&gt; 10 400 árboles</strong>, logrando <strong>98,39 % con VGG16</strong> y <strong>AUC 0,95 con YOLOv8</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="stagger d-3 space-y-3">
+            <div class="text-3xl">🇵🇪</div>
+            <div class="frost-carousel-card text-center">
+              <h3 class="font-bold text-base text-white">&gt; 98 % en Amazonía Peruana</h3>
+              <div class="w-40 h-40 mx-auto my-4 rounded-full overflow-hidden border-2 border-amber-400/60 shadow-lg">
+                <img src="./assets/image9.png" alt="Segmentación Tala Perú" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                <strong>Md Jelas et al. (2024):</strong> Redes <strong>U-Net y DeepLabV3+</strong> (92,78 %–98,14 %) automatizan en <strong>minutos</strong> el mapeo forestal que tomaba semanas.
+              </p>
+            </div>
+          </div>
+
+          <div class="stagger d-4 space-y-3">
+            <div class="text-3xl">🗺️</div>
+            <div class="frost-carousel-card text-center">
+              <h3 class="font-bold text-base text-white">Polígonos GeoJSON y Mapas</h3>
+              <div class="w-40 h-40 mx-auto my-4 rounded-full overflow-hidden border-2 border-cyan-400/60 shadow-lg">
+                <img src="./assets/image14.png" alt="Mapa de Calor DEM" class="w-full h-full object-cover" />
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                Guardar detecciones con <strong>latitud, longitud y fecha en GeoJSON / Shapefiles</strong> evita guardar videos pesados y genera <strong>mapas de calor mes a mes</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 13: EXPOSITOR 5 · TABLA 1 OFICIAL SINTETIZADA E INTERACTIVA
+         ======================================================================== -->
+    <section class="scene" data-scene="12" data-hero="bg-blur" data-img="./assets/image14.png"
+      data-speaker="Expositor 5 · Jelsin Reyes (Tabla 1 Comparativa Oficial)"
+      data-script="En la Tabla 1 de nuestro informe comparamos los resultados cuantitativos de los siete autores revisados frente a nuestros tres objetivos específicos: exactitud y control de falsos positivos (Objetivo 1), rendimiento, peso y tiempo de respuesta (Objetivo 2), y georreferenciación y mapas de deforestación (Objetivo 3).">
+      <div class="w-full max-w-6xl mx-auto space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="stagger d-1 title-condensed text-4xl sm:text-5xl text-white">
+            TABLA 1. COMPARACIÓN CIENTÍFICA (SCOPUS 2023–2026)
+          </h2>
+          <div class="stagger d-1 flex gap-1.5 bg-black/50 p-1 rounded-xl border border-white/15 text-xs">
+            <button onclick="filterTableCol(0)" class="t-filter px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold">Todos</button>
+            <button onclick="filterTableCol(1)" class="t-filter px-3 py-1 rounded-lg text-slate-300 hover:bg-white/10">Obj. 1 (Exactitud)</button>
+            <button onclick="filterTableCol(2)" class="t-filter px-3 py-1 rounded-lg text-slate-300 hover:bg-white/10">Obj. 2 (Velocidad)</button>
+            <button onclick="filterTableCol(3)" class="t-filter px-3 py-1 rounded-lg text-slate-300 hover:bg-white/10">Obj. 3 (Geodatos)</button>
+          </div>
+        </div>
+
+        <div class="stagger d-2 rounded-2xl overflow-hidden bg-black/60 backdrop-blur-2xl border border-white/15 shadow-2xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-emerald-950/80 text-emerald-300 font-mono-code uppercase text-[11px] border-b border-white/15">
+                <th class="py-3 px-3.5">Autor (Año)</th>
+                <th class="py-3 px-3.5">Modelo / Sistema</th>
+                <th class="py-3 px-3.5 tc-1">Exactitud y Falsos Positivos (Obj. 1)</th>
+                <th class="py-3 px-3.5 tc-2">Rendimiento y Peso (Obj. 2)</th>
+                <th class="py-3 px-3.5 tc-3">Georreferenciación (Obj. 3)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10 text-slate-200">
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Saydirasulovich (2023)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-amber-300">YOLOv8 + BiFormer + GSConv</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>79,4 % AP</strong> humo (71,3 % pequeño / 92,6 % grande)</td>
+                <td class="py-2.5 px-3.5 tc-2">GSConv reduce memoria en vuelo</td>
+                <td class="py-2.5 px-3.5 tc-3 text-slate-400">Solo detección visual en vuelo</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Md Jelas et al. (2024)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-emerald-300">U-Net + DeepLabV3+</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>92,78 %–98,14 %</strong> tala (<strong>&gt;98 % Perú</strong>)</td>
+                <td class="py-2.5 px-3.5 tc-2">Mapeo automático en <strong>minutos</strong></td>
+                <td class="py-2.5 px-3.5 tc-3">Segmentación por píxeles e historial</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Shamta y Demir (2024)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-cyan-300">Jetson Nano + RPi + YOLOv8</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>96 % clasificación</strong> / 89 % en vuelo</td>
+                <td class="py-2.5 px-3.5 tc-2"><strong>Alerta GSM inmediata</strong> (~25 min bat.)</td>
+                <td class="py-2.5 px-3.5 tc-3">Envía foto + <strong>latitud/longitud GPS</strong></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Yun et al. (2025)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-orange-300">YOLOv8 + SPDConv + MLCA</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>+5,5 % sensibilidad</strong> (&gt;3 200 fotos)</td>
+                <td class="py-2.5 px-3.5 tc-2"><strong>-43,8 % parámetros</strong> (5,96 M)</td>
+                <td class="py-2.5 px-3.5 tc-3">Focos pequeños tras ramas en montaña</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Luo et al. (2025)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-emerald-300">YOLO-UFS (MobileNetV4)</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>91,3 % mAP</strong> (filtra sol y neblina)</td>
+                <td class="py-2.5 px-3.5 tc-2"><strong>-74 % peso (7,4 MB a 30 FPS)</strong></td>
+                <td class="py-2.5 px-3.5 tc-3">Estabilización frente al viento</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3.5 font-bold text-white">Borse et al. (2025)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-cyan-300">AETDA (VGG16 + YOLOv8)</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>98,39 % exactitud</strong> (10 400 árboles)</td>
+                <td class="py-2.5 px-3.5 tc-2"><strong>AUC 0,95</strong> rápido por copa</td>
+                <td class="py-2.5 px-3.5 tc-3"><strong>GeoJSON y Shapefiles (&lt;10 cm/px)</strong></td>
+              </tr>
+              <tr class="bg-emerald-500/15">
+                <td class="py-2.5 px-3.5 font-bold text-emerald-300">Ma et al. (2026)</td>
+                <td class="py-2.5 px-3.5 font-mono-code text-emerald-300 font-bold">AHE-YOLO (YOLO11)</td>
+                <td class="py-2.5 px-3.5 tc-1"><strong>94,8 % mAP</strong> / 85,1 % sensibilidad</td>
+                <td class="py-2.5 px-3.5 tc-2"><strong>Solo 3,5 MB y 333,3 FPS</strong></td>
+                <td class="py-2.5 px-3.5 tc-3">Mapas térmicos de activación</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 14 (00:11 / 00:13 style): OBJETO 3D A LA IZQUIERDA + DISCUSIÓN CRÍTICA A LA DERECHA
+         ======================================================================== -->
+    <section class="scene" data-scene="13" data-hero="left" data-img="./assets/image18.png"
+      data-speaker="Expositor 5 · Jelsin Reyes (Discusión Crítica: Consensos, Controversias y Lagunas)"
+      data-script="En la discusión crítica identificamos: Primero, dos consensos plenos: el dron (<10 cm/píxel bajo las nubes) supera al satélite (1 a 5 m/píxel), y el límite de batería (~25 min) obliga a comprimir los modelos. Segundo, dos controversias técnicas: Saydirasulovich prioriza detectar humo primero, pero Yun, Luo y Ma rebaten que la neblina andina imita al humo y exigen combinar con focos de calor e imágenes negativas; además, Shamta y Luo procesan a bordo en una Jetson Nano, mientras Borse procesa en estación base con VGG16. Tercero, dos oportunidades para La Libertad: integrar cámaras térmicas infrarrojas para brasas nocturnas en ichu, y redes de radio LoRaWAN con guardado local para quebradas sin cobertura celular GSM.">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center">
+        <div class="lg:col-span-5"></div>
+        <div class="lg:col-span-7 space-y-4 lg:pl-6">
+          <h2 class="stagger d-1 title-condensed text-5xl sm:text-6xl text-white">
+            DISCUSIÓN CRÍTICA Y PROPUESTA ANDINA
+          </h2>
+
+          <div class="stagger d-2 glow-bar">
+            <div class="text-xs font-mono-code text-emerald-400 font-bold uppercase">✅ 1. Consensos Científicos</div>
+            <p class="text-xs sm:text-sm text-slate-200 mt-1">
+              El dron (<strong>&lt;10 cm/píxel</strong>, volando bajo nubes) supera ampliamente al satélite (1–5 m/píxel), y la batería (<strong>~25 min</strong>) exige comprimir los algoritmos a bordo.
+            </p>
+          </div>
+
+          <div class="stagger d-3 glow-bar" style="border-color: rgba(245, 158, 11, 0.55);">
+            <div class="text-xs font-mono-code text-amber-300 font-bold uppercase">⚡ 2. Controversias Técnicas en la Literatura</div>
+            <p class="text-xs sm:text-sm text-slate-200 mt-1">
+              • <strong>¿Humo vs. Llamas/Calor?</strong> <em>Saydirasulovich (2023)</em> prioriza el humo, pero <em>Yun, Luo y Ma</em> rebaten que en montaña la <strong>neblina matutina imita al humo joven</strong>, exigiendo combinar con calor e imágenes negativas.<br/>
+              • <strong>¿Edge AI vs. Estación Base?</strong> <em>Shamta y Luo</em> procesan en vuelo con <strong>Jetson Nano</strong>; <em>Borse</em> procesa en estación base con <strong>VGG16 (98,39 %)</strong>.
+            </p>
+          </div>
+
+          <div class="stagger d-4 glow-bar" style="border-color: rgba(249, 115, 22, 0.65);">
+            <div class="text-xs font-mono-code text-orange-400 font-bold uppercase">⛰️ 3. Lagunas y Propuesta para La Libertad</div>
+            <p class="text-xs sm:text-sm text-slate-200 mt-1">
+              • <strong>Cámara Térmica Infrarroja:</strong> Superar el sesgo de cámaras RGB diurnas detectando brasas nocturnas en pastizales de <strong>ichu, eucalipto y panllevar</strong>.<br/>
+              • <strong>Red de Radio LoRaWAN + Caché Local:</strong> Para quebradas de Santiago de Chuco, Otuzco, Sánchez Carrión, Bolívar y Pataz sin señal celular GSM.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         ESCENA 15 (00:20 de @trazomedico): CONCLUSIÓN GENERAL + PÍLDORA CENTRAL + REFERENCIAS DOI
+         ======================================================================== -->
+    <section class="scene" data-scene="14" data-hero="bottom-left" data-img="./assets/image19.png"
+      data-speaker="Conclusión General y Referencias · Ingeniería de Sistemas UCV 2026"
+      data-script="En conclusión, la síntesis crítica de los resultados y discusiones de quienes ya implementaron estas tecnologías confirma que un sistema de información con drones inteligentes y algoritmos ligeros logra reducir el tiempo de detección de anomalías forestales de varias horas a pocos segundos, respondiendo de forma sólida al problema de investigación planteado en la región La Libertad. ¡Muchas gracias por su atención!">
+      <div class="w-full max-w-5xl mx-auto text-center space-y-6">
+        <h2 class="stagger d-1 title-condensed text-5xl sm:text-7xl text-white">
+          CONCLUSIÓN GENERAL · UCV 2026
+        </h2>
+
+        <!-- Píldora central iluminada idéntica a 'MORFOLOGÍA DE LAS VEGETACIONES' (00:20) -->
+        <div class="stagger d-2 inline-block px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-emerald-600 text-white font-bold text-base sm:text-xl shadow-[0_0_45px_rgba(249,115,22,0.5)] border border-white/30">
+          De varias horas de espera satelital a pocos segundos que salvan nuestros bosques andinos
+        </div>
+
+        <p class="stagger d-3 text-sm sm:text-lg text-slate-200 max-w-3xl mx-auto leading-relaxed">
+          Unir <strong>drones inteligentes (&lt;10 cm/píxel)</strong>, algoritmos ultraligeros (<strong>YOLO11 de 3,5 MB / U-Net &gt;98 %</strong>), <strong>cámaras térmicas</strong>, radio <strong>LoRaWAN</strong> y bases de datos <strong>GeoJSON</strong> responde de manera integral a la emergencia forestal en <strong>La Libertad</strong>.
+        </p>
+
+        <!-- Botones limpios de acceso a Referencias Scopus / DOI (Anexo 2) -->
+        <div class="stagger d-4 pt-2 flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto text-xs font-mono-code">
+          <a href="https://doi.org/10.3390/s23208374" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Saydirasulovich (2023) DOI</a>
+          <a href="https://doi.org/10.3389/ffgc.2024.1300060" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Md Jelas (2024) DOI</a>
+          <a href="https://doi.org/10.1371/journal.pone.0299058" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Shamta y Demir (2024) DOI</a>
+          <a href="https://doi.org/10.3390/fire8040138" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Yun et al. (2025) DOI</a>
+          <a href="https://doi.org/10.3390/f16050743" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Luo et al. (2025) DOI</a>
+          <a href="https://doi.org/10.1371/journal.pone.0335009" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Borse et al. (2025) DOI</a>
+          <a href="https://doi.org/10.3390/su18052436" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 border border-white/15 transition-all">🔗 Ma et al. (2026) DOI</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       CONTROLES MINIMALISTAS INFERIORES (SIN AMONTONAR LA PANTALLA)
+       Autor: César Quiroz
+       ========================================================================== -->
+  <div class="fixed bottom-4 right-8 z-40 flex items-center gap-2">
+    <button onclick="prevScene()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all" title="Anterior (←)">
+      ‹
+    </button>
+    <span class="px-3 py-1 rounded-full bg-black/50 border border-white/10 font-mono-code text-xs text-emerald-400">
+      <span id="sceneNumLabel">01</span> / 15
+    </span>
+    <button onclick="nextScene()" class="w-9 h-9 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold flex items-center justify-center transition-all shadow-lg shadow-emerald-500/30" title="Siguiente (→)">
+      ›
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       MOTOR JAVASCRIPT DE COREOGRAFÍA MORPH Y PARTÍCULAS 3D
+       Autor: César Quiroz
+       ========================================================================== -->
+  <script>
+    /**
+     * Controlador de coreografía Morph del Objeto 3D y transición de escenas
+     * Autor: César Quiroz
+     */
+    const scenes = Array.from(document.querySelectorAll('.scene'));
+    const totalScenes = scenes.length;
+    let currentScene = 0;
+    let isMoving = false;
+
+    function goToScene(index) {
+      if (index < 0 || index >= totalScenes) return;
+      if (isMoving && index !== currentScene) return;
+      isMoving = true;
+      setTimeout(() => { isMoving = false; }, 650);
+
+      scenes.forEach((sc, i) => {
+        sc.classList.remove('active', 'prev');
+        if (i < index) sc.classList.add('prev');
+      });
+
+      currentScene = index;
+      const active = scenes[currentScene];
+      active.classList.add('active');
+
+      // 1. Mover el Objeto 3D persistente a su nueva posición en pantalla (center, bg-blur, right, left, right-edge, bottom-left)
+      const heroPos = active.dataset.hero || 'center';
+      document.body.setAttribute('data-hero-pos', heroPos);
+
+      // 2. Crossfade suave sin parpadeo dentro de la esfera 3D y el fondo difuminado
+      const imgPath = active.dataset.img || './assets/image1.png';
+      const sphereImg = document.getElementById('heroSphereImg');
+      const bgImg = document.getElementById('bgPhotoLayer');
+      if (sphereImg.getAttribute('src') !== imgPath) {
+        sphereImg.style.opacity = '0.25';
+        sphereImg.style.transform = 'scale(1.22) rotate(4deg)';
+        setTimeout(() => {
+          sphereImg.src = imgPath;
+          bgImg.src = imgPath;
+          sphereImg.style.opacity = '1';
+          sphereImg.style.transform = 'scale(1.1) rotate(0deg)';
+        }, 220);
+      }
+
+      // 3. Actualizar cabecera minimalista y contador
+      document.getElementById('sceneNumLabel').textContent = String(currentScene + 1).padStart(2, '0');
+      document.getElementById('headerSpeakerLabel').textContent = active.dataset.speaker || '';
+
+      // 4. Actualizar Guion del Expositor
+      document.getElementById('scriptSpeakerTitle').textContent = active.dataset.speaker || '';
+      document.getElementById('scriptBodyText').textContent = active.dataset.script || '';
+
+      if (typeof sceneDroneMoods !== 'undefined') { setDroneEmotion(sceneDroneMoods[currentScene]); }
+      // 5. Animar barras de exactitud si la escena las tiene
+      active.querySelectorAll('.bar-fill').forEach(bar => {
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = bar.dataset.width; }, 160);
+      });
+    }
+
+    function nextScene() {
+      if (currentScene < totalScenes - 1) goToScene(currentScene + 1);
+    }
+
+    function prevScene() {
+      if (currentScene > 0) goToScene(currentScene - 1);
+    }
+
+    function toggleMenuDrawer() {
+      document.getElementById('menuDrawer').classList.toggle('hidden');
+    }
+
+    function toggleScriptModal() {
+      document.getElementById('scriptModal').classList.toggle('hidden');
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function filterTableCol(colIdx) {
+      document.querySelectorAll('.t-filter').forEach((btn, i) => {
+        btn.className = i === colIdx
+          ? 't-filter px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold'
+          : 't-filter px-3 py-1 rounded-lg text-slate-300 hover:bg-white/10';
+      });
+      [1, 2, 3].forEach(c => {
+        document.querySelectorAll('.tc-' + c).forEach(cell => {
+          cell.style.opacity = (colIdx === 0 || colIdx === c) ? '1' : '0.28';
+          cell.style.background = (colIdx === c) ? 'rgba(16, 185, 129, 0.16)' : 'transparent';
+        });
+      });
+    }
+
+    // Teclado
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextScene();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevScene();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key === 'g' || e.key === 'G') {
+        toggleScriptModal();
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleMenuDrawer();
+      }
+    });
+
+    // Rueda del mouse suave
+    let wheelLock = false;
+    window.addEventListener('wheel', (e) => {
+      if (wheelLock || Math.abs(e.deltaY) < 25) return;
+      wheelLock = true;
+      if (e.deltaY > 0) nextScene();
+      else prevScene();
+      setTimeout(() => { wheelLock = false; }, 680);
+    }, { passive: true });
+
+    // Partículas Bokeh 3D flotantes (como las células/esferas del inicio de @trazomedico)
+    const canvas = document.getElementById('bokehCanvas');
+    const ctx = canvas.getContext('2d');
+    let orbs = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    for (let i = 0; i < 24; i++) {
+      orbs.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 26 + 8,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        alpha: Math.random() * 0.22 + 0.05,
+        warm: i % 3 === 0
+      });
+    }
+
+    function animateBokeh() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      orbs.forEach(o => {
+        o.x += o.vx;
+        o.y += o.vy;
+        if (o.x < -40) o.x = canvas.width + 40;
+        if (o.x > canvas.width + 40) o.x = -40;
+        if (o.y < -40) o.y = canvas.height + 40;
+        if (o.y > canvas.height + 40) o.y = -40;
+
+        const grad = ctx.createRadialGradient(o.x - o.r * 0.3, o.y - o.r * 0.3, o.r * 0.1, o.x, o.y, o.r);
+        if (o.warm) {
+          grad.addColorStop(0, `rgba(251, 146, 60, ${o.alpha * 1.6})`);
+          grad.addColorStop(1, 'rgba(251, 146, 60, 0)');
+        } else {
+          grad.addColorStop(0, `rgba(52, 211, 153, ${o.alpha * 1.6})`);
+          grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        }
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateBokeh);
+    }
+    animateBokeh();
+
+    const sceneDroneMoods = [
+      { mood: 'happy',    text: '😊 ¡Bienvenidos! Soy el Dron UCV', color: '#10b981' },
+      { mood: 'angry',    text: '😠 ¡Las nubes bloquean al satélite!', color: '#ef4444' },
+      { mood: 'shocked',  text: '😱 ¡10,9 millones ha/año perdidas!', color: '#fbbf24' },
+      { mood: 'angry',    text: '😡 ¡95 % son provocados por humanos!', color: '#ef4444' },
+      { mood: 'shocked',  text: '😱 ¡2 990 ha quemadas en La Libertad!', color: '#fbbf24' },
+      { mood: 'happy',    text: '🎯 ¡3 Objetivos listos para cumplir!', color: '#10b981' },
+      { mood: 'scanning', text: '🧐 ¡Unamos detección de fuego y tala!', color: '#38bdf8' },
+      { mood: 'scanning', text: '🔬 Analizando estudios 2023–2024...', color: '#38bdf8' },
+      { mood: 'happy',    text: '🤩 ¡Modelos de 2025 y 2026 increíbles!', color: '#10b981' },
+      { mood: 'happy',    text: '🎯 ¡98,39 % de exactitud sin falsas alarmas!', color: '#10b981' },
+      { mood: 'turbo',    text: '⚡ ¡MODO TURBO: 3,5 MB a 333,3 FPS!', color: '#c084fc' },
+      { mood: 'happy',    text: '🗺️ ¡Visión <10 cm/px y mapas GeoJSON!', color: '#10b981' },
+      { mood: 'scanning', text: '📊 Comparando las 7 arquitecturas...', color: '#38bdf8' },
+      { mood: 'scanning', text: '🌡️ ¡Activando cámara térmica y LoRaWAN!', color: '#38bdf8' },
+      { mood: 'happy',    text: '🥳 ¡Salvando nuestros bosques andinos!', color: '#10b981' }
+    ];
+
+    const manualMoods = [
+      { mood: 'happy',    text: '😄 ¡Vamos por ese 20 con el profesor!', color: '#10b981' },
+      { mood: 'shocked',  text: '😲 ¡Vuelo bajo las nubes a <10 cm/px!', color: '#fbbf24' },
+      { mood: 'angry',    text: '😤 ¡Cero tolerancia a los incendios!', color: '#ef4444' },
+      { mood: 'turbo',    text: '🚀 ¡Alerta enviada en 2 segundos!', color: '#c084fc' },
+      { mood: 'scanning', text: '🛰️ Escaneando cabeceras de cuenca...', color: '#38bdf8' }
+    ];
+    let manualIdx = 0;
+
+    const sceneDioramaData = [
+      { icon: '🚁', val: 'LA LIBERTAD', lbl: 'Drones IA · TIF Nivel I', secImg: './assets/u_drone_forest.jpg', secLbl: '🚁 Patrullaje Aéreo UCV', cap: '🚁 Sistema de Drones Inteligentes · UCV 2026' },
+      { icon: '🌍', val: 'ODS 13 Y 15', lbl: 'Acción por el Clima y Bosques', secImg: './assets/u_climate_forest.jpg', secLbl: '🌿 Ecosistemas Terrestres', cap: '🌿 De Vigilancia Lenta a Visión Artificial IA' },
+      { icon: '🌲', val: '10,9 M ha/año', lbl: 'Deforestación Mundial (FAO)', secImg: './assets/u_fao_global.jpg', secLbl: '🔥 42 % Pérdida por Fuego', cap: '🌍 Crisis Global: >11 Canchas de Fútbol / min' },
+      { icon: '🇵🇪', val: '1 754', lbl: 'Incendios en Perú (INDECI)', secImg: './assets/u_indeci_fire.jpg', secLbl: '⚠️ 95 % Causa Humana', cap: '🚨 Perú Top 10 Global · Pico 840 en Septiembre' },
+      { icon: '⛰️', val: '2 990 ha', lbl: 'Perdidas en La Libertad (COER)', secImg: './assets/u_santiago_chuco.jpg', secLbl: '💧 Cabeceras de Cuenca', cap: '🔥 Santiago de Chuco (+1 000 ha) y +42 Incendios' },
+      { icon: '🎯', val: '3 OBJETIVOS', lbl: 'Exactitud · Latencia · GeoJSON', secImg: './assets/u_obj_gen.jpg', secLbl: '📡 Red Web / Móvil', cap: '🎯 Optimización de Tiempos de Detección 2026' },
+      { icon: '🧠', val: 'YOLO + U-Net', lbl: 'Fusión Incendios + Tala', secImg: './assets/u_theory_yolo.jpg', secLbl: '🌲 Segmentación Semántica', cap: '🔍 Brecha Teórica: Unir Fuego y Desmonte en los Andes' },
+      { icon: '🔬', val: '96 % – 98 %', lbl: 'Hitos Científicos 2023–2024', secImg: './assets/u_amazon_river.jpg', secLbl: '💨 YOLOv8 + BiFormer', cap: '📚 Revisión Scopus Q1: Sensors, Frontiers y PLOS ONE' },
+      { icon: '🚀', val: '2025 – 2026', lbl: 'Modelos Ultraligeros Edge AI', secImg: './assets/u_gpu_circuit.jpg', secLbl: '🗺️ 10 400+ Árboles Auditados', cap: '⚡ Evolución hacia YOLO-UFS, AETDA y AHE-YOLO11' },
+      { icon: '🎯', val: '98,39 %', lbl: 'Exactitud Máxima (OE1)', secImg: './assets/u_autumn_fog.jpg', secLbl: '🌤️ Cero Falsos Positivos', cap: '📊 Resultados OE1: Filtrado de Neblina y Brillo Solar' },
+      { icon: '⚡', val: '3,5 MB', lbl: '333,3 FPS Lab / 30 FPS Dron', secImg: './assets/u_hardware_chip.jpg', secLbl: '📡 Alerta GSM en Segundos', cap: '⚡ Resultados OE2: -74 % Peso en Placa Jetson Nano' },
+      { icon: '🗺️', val: '10 cm/px', lbl: '50x Más Nítido que el Satélite', secImg: './assets/u_gis_map.jpg', secLbl: '📐 Polígonos GeoJSON', cap: '🗺️ Resultados OE3: Mapas de Calor Multitemporales' },
+      { icon: '📑', val: '7 ESTUDIOS', lbl: 'Síntesis Comparativa Scopus', secImg: './assets/u_command_center.jpg', secLbl: '💻 Hardware + Software IA', cap: '📋 Tabla 1 Oficial según los 3 Objetivos Específicos' },
+      { icon: '🌡️', val: 'LoRaWAN + IR', lbl: 'Propuesta para los Andes', secImg: './assets/u_lorawan_tower.jpg', secLbl: '⛰️ Quebradas sin Señal GSM', cap: '⚖️ Cámara Térmica en Ichu + Radio de Largo Alcance' },
+      { icon: '🛡️', val: 'SEGUNDOS', lbl: 'Que Salvan Bosques Andinos', secImg: './assets/u_andean_lagoon.jpg', secLbl: '🎓 Ingeniería de Sistemas UCV', cap: '🏆 Conclusión General · La Libertad 2026' }
+    ];
+
+    function updateDioramaContent(idx) {
+      const d = sceneDioramaData[idx];
+      if (!d) return;
+      const ic = document.getElementById('dioramaKpiIcon');
+      const vl = document.getElementById('dioramaKpiValue');
+      const lb = document.getElementById('dioramaKpiLabel');
+      const si = document.getElementById('dioramaSecondaryImg');
+      const sl = document.getElementById('dioramaSecondaryLabel');
+      const cp = document.getElementById('dioramaCaption');
+      if (ic) ic.textContent = d.icon;
+      if (vl) vl.textContent = d.val;
+      if (lb) lb.textContent = d.lbl;
+      if (si) si.src = d.secImg;
+      if (sl) sl.textContent = d.secLbl;
+      if (cp) cp.textContent = d.cap;
+    }
+
+    const droneEl = document.getElementById('roamingDrone3D');
+    const eyesOffsetEl = document.getElementById('roamingEyesOffset');
+    const trailCanvas = document.getElementById('droneTrailCanvas');
+    const trailCtx = trailCanvas.getContext('2d');
+
+    function resizeTrail() {
+      trailCanvas.width = window.innerWidth;
+      trailCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeTrail);
+    resizeTrail();
+
+    let droneState = {
+      x: window.innerWidth * 0.78,
+      y: window.innerHeight * 0.10,
+      vx: 0,
+      vy: 0,
+      targetX: window.innerWidth * 0.78,
+      targetY: window.innerHeight * 0.10,
+      roll: 0,
+      pitch: 0,
+      flipAngle: 0,
+      isDragging: false,
+      roamPhase: 0,
+      currentColor: '#10b981'
+    };
+
+    const sceneWaypoints = [
+      { rx: 0.72, ry: 0.14 },
+      { rx: 0.76, ry: 0.13 },
+      { rx: 0.70, ry: 0.14 },
+      { rx: 0.22, ry: 0.14 },
+      { rx: 0.72, ry: 0.14 },
+      { rx: 0.76, ry: 0.14 },
+      { rx: 0.22, ry: 0.15 },
+      { rx: 0.76, ry: 0.13 },
+      { rx: 0.22, ry: 0.13 },
+      { rx: 0.72, ry: 0.14 },
+      { rx: 0.76, ry: 0.13 },
+      { rx: 0.22, ry: 0.14 },
+      { rx: 0.76, ry: 0.13 },
+      { rx: 0.22, ry: 0.14 },
+      { rx: 0.72, ry: 0.15 }
+    ];
+
+    function clampDroneX(val) {
+      const margin = window.innerWidth < 768 ? 16 : 95;
+      const rightPad = window.innerWidth < 768 ? 120 : 285;
+      return Math.max(margin, Math.min(window.innerWidth - rightPad, val));
+    }
+    function clampDroneY(val) {
+      const topPad = window.innerWidth < 768 ? 55 : 68;
+      const botPad = window.innerWidth < 768 ? 140 : 265;
+      return Math.max(topPad, Math.min(window.innerHeight - botPad, val));
+    }
+
+    // Soporte de gestos táctiles (Swipe izquierda/derecha) para celulares y tablets
+    let touchStartX = 0;
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      if (e.changedTouches && e.changedTouches.length > 0) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+          if (dx < 0) nextScene();
+          else prevScene();
+        }
+      }
+    }, { passive: true });
+
+    setInterval(() => {
+      if (droneState.isDragging) return;
+      const wp = sceneWaypoints[currentScene] || { rx: 0.72, ry: 0.14 };
+      const wanderX = (Math.random() - 0.5) * 220;
+      const wanderY = (Math.random() - 0.5) * 110;
+      droneState.targetX = clampDroneX(window.innerWidth * wp.rx + wanderX);
+      droneState.targetY = clampDroneY(window.innerHeight * wp.ry + wanderY);
+    }, 3200);
+
+    droneEl.addEventListener('mousedown', (e) => {
+      droneState.isDragging = true;
+      e.stopPropagation();
+    });
+    window.addEventListener('mouseup', () => {
+      droneState.isDragging = false;
+    });
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (droneState.isDragging) {
+        droneState.targetX = e.clientX - 92;
+        droneState.targetY = e.clientY - 92;
+      }
+      if (eyesOffsetEl) {
+        const dx = Math.max(-8, Math.min(8, (mouseX - (droneState.x + 92)) * 0.018));
+        const dy = Math.max(-5, Math.min(5, (mouseY - (droneState.y + 92)) * 0.018));
+        eyesOffsetEl.setAttribute('transform', `translate(${dx}, ${dy})`);
+      }
+      const stage3D = document.getElementById('dioramaStage3D');
+      if (stage3D) {
+        const rx = ((e.clientY / window.innerHeight) - 0.5) * -14;
+        const ry = ((e.clientX / window.innerWidth) - 0.5) * 16;
+        stage3D.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      }
+    });
+
+    let trailParticles = [];
+
+    function updateRoamingDronePhysics() {
+      droneState.roamPhase += 0.04;
+      const hoverX = Math.sin(droneState.roamPhase) * 32;
+      const hoverY = Math.cos(droneState.roamPhase * 1.6) * 16;
+
+      const ax = ((droneState.targetX + hoverX) - droneState.x) * 0.048;
+      const ay = ((droneState.targetY + hoverY) - droneState.y) * 0.048;
+
+      droneState.vx = (droneState.vx + ax) * 0.82;
+      droneState.vy = (droneState.vy + ay) * 0.82;
+
+      droneState.x = clampDroneX(droneState.x + droneState.vx);
+      droneState.y = clampDroneY(droneState.y + droneState.vy);
+
+      const targetRoll = Math.max(-28, Math.min(28, droneState.vx * 2.5));
+      const lookYaw = Math.max(-18, Math.min(18, (mouseX - (droneState.x + 92)) * 0.025));
+      const lookPitch = Math.max(-14, Math.min(14, (mouseY - (droneState.y + 92)) * -0.02));
+
+      droneState.roll += (targetRoll - droneState.roll) * 0.15;
+      droneState.pitch += (lookPitch - droneState.pitch) * 0.15;
+
+      if (droneState.flipAngle > 0) {
+        droneState.flipAngle = Math.max(0, droneState.flipAngle - 15);
+      }
+
+      droneEl.style.transform = `translate3d(${droneState.x}px, ${droneState.y}px, 80px) rotateZ(${droneState.roll + droneState.flipAngle}deg) rotateY(${lookYaw}deg) rotateX(${droneState.pitch}deg)`;
+
+      if (Math.random() < 0.65) {
+        trailParticles.push({
+          x: droneState.x + 92 + (Math.random() - 0.5) * 14,
+          y: droneState.y + 148,
+          r: Math.random() * 4 + 2,
+          vy: Math.random() * 2.2 + 1.2,
+          vx: (Math.random() - 0.5) * 1.2,
+          alpha: 0.75,
+          color: droneState.currentColor
+        });
+      }
+
+      trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+      for (let i = trailParticles.length - 1; i >= 0; i--) {
+        const p = trailParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.024;
+        p.r *= 0.97;
+        if (p.alpha <= 0.02) {
+          trailParticles.splice(i, 1);
+          continue;
+        }
+        trailCtx.beginPath();
+        trailCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        trailCtx.fillStyle = p.color;
+        trailCtx.globalAlpha = p.alpha;
+        trailCtx.fill();
+      }
+      trailCtx.globalAlpha = 1;
+
+      requestAnimationFrame(updateRoamingDronePhysics);
+    }
+
+    function setDroneEmotion(moodObj) {
+      if (!moodObj) return;
+      document.body.setAttribute('data-drone-mood', moodObj.mood);
+      droneState.currentColor = moodObj.color;
+
+      const bubble = document.getElementById('roamingEmotionBubble');
+      if (bubble) {
+        bubble.textContent = moodObj.text;
+        bubble.style.borderColor = moodObj.color;
+      }
+
+      ['happy', 'shocked', 'angry', 'scanning', 'turbo'].forEach(m => {
+        const el = document.getElementById('rface-' + m);
+        if (el) el.style.display = (m === moodObj.mood) ? 'block' : 'none';
+      });
+
+      ['roamingAntennaL', 'roamingAntennaR', 'roamingGimbalLens'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('fill', moodObj.color);
+      });
+
+      updateDioramaContent(currentScene);
+
+      const wp = sceneWaypoints[currentScene] || { rx: 0.72, ry: 0.14 };
+      droneState.targetX = clampDroneX(window.innerWidth * wp.rx - 92);
+      droneState.targetY = clampDroneY(window.innerHeight * wp.ry - 20);
+    }
+
+    function triggerDroneAcrobatics() {
+      droneState.flipAngle = 360;
+      manualIdx = (manualIdx + 1) % manualMoods.length;
+      setDroneEmotion(manualMoods[manualIdx]);
+      droneState.targetX = clampDroneX(Math.random() * (window.innerWidth - 360) + 110);
+      droneState.targetY = clampDroneY(Math.random() * (window.innerHeight * 0.45) + 75);
+    }
+
+    updateRoamingDronePhysics();
+
+    // =========================================================================
+    // SISTEMA INTERACTIVO DE COMPARACIÓN VISUAL 3D (REALIDAD VS SOLUCIÓN IA)
+    // Se activa al hacer clic en los cuadros de Realidad/Propuesta, OE1, OE2, OE3 y Conclusión
+    // Autor: César Quiroz
+    // =========================================================================
+    const compareModalHtml = `
+      <div id="visualCompareModal3D" onclick="closeVisualCompare(event)">
+        <div class="compare-3d-box" onclick="event.stopPropagation()">
+          <div class="flex items-center justify-between border-b border-white/15 pb-3 mb-4">
+            <div>
+              <span id="vcCategory" class="text-[11px] font-mono-code text-emerald-400 font-bold uppercase tracking-widest">COMPARATIVA VISUAL 3D · REALIDAD VS. SOLUCIÓN IA</span>
+              <h3 id="vcTitle" class="title-condensed text-3xl sm:text-4xl text-white mt-0.5">Título</h3>
+            </div>
+            <button onclick="closeVisualCompare()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold text-lg flex items-center justify-center transition-all">✕</button>
+          </div>
+
+          <!-- Explicación sencilla en lenguaje claro para exponer al jurado -->
+          <div class="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 mb-4">
+            <div class="text-xs font-mono-code text-emerald-300 font-bold uppercase mb-1">💡 ¿QUÉ SIGNIFICA ESTO EN SENCILLO PARA TU EXPOSICIÓN?</div>
+            <p id="vcSimpleExplain" class="text-xs sm:text-sm text-white leading-relaxed"></p>
+          </div>
+
+          <!-- Comparación Visual Lado a Lado con Imágenes 3D en Movimiento -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Lado Izquierdo: Realidad Tradicional / Sin el Sistema -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-rose-400 uppercase font-mono-code">
+                <span>❌ ANTES (SIN EL SISTEMA / TRADICIONAL)</span>
+                <span id="vcBeforeMetric" class="px-2 py-0.5 rounded bg-rose-500/20 border border-rose-400/40">Lento / Impreciso</span>
+              </div>
+              <div class="compare-img-card border-rose-500/50">
+                <img id="vcBeforeImg" src="./assets/image10.png" alt="Antes" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex items-end p-3.5">
+                  <p id="vcBeforeCaption" class="text-xs text-rose-100 font-medium leading-snug"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lado Derecho: Solución y Progreso con Drones IA -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-emerald-400 uppercase font-mono-code">
+                <span>✅ AHORA (RESULTADO CON DRONES IA)</span>
+                <span id="vcAfterMetric" class="px-2 py-0.5 rounded bg-emerald-500/25 border border-emerald-400/50 text-emerald-200">Optimizado</span>
+              </div>
+              <div class="compare-img-card border-emerald-400/70">
+                <img id="vcAfterImg" src="./assets/image1.png" alt="Después con IA" />
+                <div class="diorama-laser-line"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent flex items-end p-3.5">
+                  <p id="vcAfterCaption" class="text-xs text-emerald-100 font-medium leading-snug"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', compareModalHtml);
+
+    // Base de conocimiento visual con temas específicos y fotos nuevas únicas para CADA cuadro de las 15 diapositivas
+    const visualCompareDB = [
+      // ESCENA 02 (4 cuadros)
+      {
+        match: 'Cambio Climático',
+        cat: 'ESCENA 02 · INTRODUCCIÓN: REALIDAD ACTUAL VS. PROPUESTA IA',
+        title: '🌡️ CAMBIO CLIMÁTICO Y SEQUÍAS PROLONGADAS',
+        explain: 'El calentamiento global altera las lluvias y prolonga las sequías, dejando pastizales y bosques listos para arder ante cualquier chispa y reduciendo la capacidad de absorber CO₂. Con los drones inteligentes detectamos el foco térmico en sus primeros minutos (ODS 13 y 15).',
+        beforeMetric: 'Sequía + Emisión de GEI',
+        beforeImg: './assets/u_drought.jpg',
+        beforeCap: 'Realidad observada: Suelos resecos y matorrales altamente inflamables que liberan toneladas de CO₂ al quemarse.',
+        afterMetric: 'Protección Climática ODS 13',
+        afterImg: './assets/u_climate_forest.jpg',
+        afterCap: 'Situación deseada: Conservación de ecosistemas forestales y captura de carbono mediante vigilancia aérea preventiva.'
+      },
+      {
+        match: 'Vigilancia Lenta',
+        cat: 'ESCENA 02 · INTRODUCCIÓN: REALIDAD ACTUAL VS. PROPUESTA IA',
+        title: '🛰️ VIGILANCIA TRADICIONAL LENTA VS. DRONES BAJO NUBES',
+        explain: 'En zonas alejadas la vigilancia depende de rondas humanas a pie, avisos telefónicos tardíos de pobladores o satélites que tardan horas y se bloquean con las nubes. El dron vuela por debajo de las nubes y llega en minutos a quebradas sin caminos.',
+        beforeMetric: 'Rondas a Pie / Nubes',
+        beforeImg: './assets/u_foot_patrol.jpg',
+        beforeCap: 'Vigilancia manual: Brigadistas caminando horas por senderos empinados sin visibilidad completa de las quebradas.',
+        afterMetric: 'Vuelo Directo Bajo Nubes',
+        afterImg: './assets/u_drone_forest.jpg',
+        afterCap: 'Vigilancia con Drones IA: Sobrevuelo ágil por debajo de la capa de neblina con visión directa del bosque.'
+      },
+      {
+        match: 'Visión Artificial IA',
+        cat: 'ESCENA 02 · INTRODUCCIÓN: REALIDAD ACTUAL VS. PROPUESTA IA',
+        title: '🚁 ALGORITMOS DE VISIÓN ARTIFICIAL CONTRA FALSAS ALARMAS',
+        explain: 'Primer componente de Ingeniería de Sistemas: algoritmos de procesamiento de imágenes (YOLOv8 / YOLO11 y U-Net) que reconocen humo delgado, llamas o claros de tala sin confundir la neblina matutina ni el reflejo del sol.',
+        beforeMetric: 'Confusión con Neblina',
+        beforeImg: './assets/u_clouds_mountain.jpg',
+        beforeCap: 'Cámaras sin IA entrenada: Confunden la neblina densa de la sierra o el reflejo solar con columnas de humo.',
+        afterMetric: 'Reconocimiento IA Preciso',
+        afterImg: './assets/u_ai_vision.jpg',
+        afterCap: 'Visión por computadora embarcada: Distingue con exactitud conatos reales de fuego y áreas de tala ilegal.'
+      },
+      {
+        match: 'Alerta y Mapas GIS',
+        cat: 'ESCENA 02 · INTRODUCCIÓN: REALIDAD ACTUAL VS. PROPUESTA IA',
+        title: '📡 REDES DE BAJA LATENCIA Y BASE DE DATOS ESPACIAL GIS',
+        explain: 'Segundo y tercer componente de Ingeniería de Sistemas: redes de comunicación que transmiten la alerta con baja demora hacia una app web/móvil, y una base de datos que guarda las coordenadas GPS para armar mapas de calor.',
+        beforeMetric: 'Avisos Telefónicos Tardíos',
+        beforeImg: './assets/u_gis_map.jpg',
+        beforeCap: 'Sin georreferenciación digital: Reportes verbales imprecisos que impiden ubicar el foco exacto en la montaña.',
+        afterMetric: 'App Web/Móvil + Mapa de Calor',
+        afterImg: './assets/u_mobile_alert.jpg',
+        afterCap: 'Notificación automática en segundos con coordenadas GPS exactas e historial para mapas de calor (ODS 13 y 15).'
+      },
+      // ESCENA 03 (3 barras de Estadística Mundial)
+      {
+        match: '10,9 M ha/año',
+        cat: 'ESCENA 03 · ESTADÍSTICA MUNDIAL (FAO, 2025)',
+        title: '🌲 TASA MUNDIAL DE DEFORESTACIÓN: 10,9 MILLONES HA/AÑO (FAO, 2025)',
+        explain: 'Según la Evaluación de los Recursos Forestales Mundiales de la FAO (2025), el planeta registra 4 140 millones de hectáreas de bosques, pero perdió 10,9 millones de hectáreas por año entre 2015 y 2025, además de 261 millones de ha afectadas por el fuego anualmente.',
+        beforeMetric: '10,9 M ha/año Deforestadas',
+        beforeImg: './assets/u_logged_trunks.jpg',
+        beforeCap: 'Tala y pérdida forestal sostenida a nivel planetario durante la década 2015–2025 según el reporte oficial de la FAO.',
+        afterMetric: '4 140 M ha por Proteger',
+        afterImg: './assets/u_fao_global.jpg',
+        afterCap: 'Monitoreo tecnológico global para frenar la pérdida de masa boscosa y conservar los pulmones del planeta.'
+      },
+      {
+        match: '25,5 M ha',
+        cat: 'ESCENA 03 · ESTADÍSTICA MUNDIAL (GOLDMAN ET AL. / WRI, 2026)',
+        title: '🌍 PÉRDIDA GLOBAL 2025: 25,5 MILLONES DE HECTÁREAS (WRI & GLAD, 2026)',
+        explain: 'El análisis de Goldman et al. (2026) para el World Resources Institute (WRI) y el laboratorio GLAD de la Universidad de Maryland reveló que en 2025 se perdieron 25,5 M ha de cobertura arbórea mundial, incluyendo 4,3 M ha de bosques primarios tropicales (>11 campos de fútbol por minuto).',
+        beforeMetric: '> 11 Canchas de Fútbol / min',
+        beforeImg: './assets/u_wri_tropics.jpg',
+        beforeCap: 'Destrucción acelerada de bosques primarios tropicales equivalente a más de 11 canchas de fútbol cada minuto.',
+        afterMetric: 'Vigilancia de Alta Resolución',
+        afterImg: './assets/u_satellite_space.jpg',
+        afterCap: 'Integración de sensores remotos y drones autónomos para auditar la cobertura arbórea en tiempo real.'
+      },
+      {
+        match: '42 % del total',
+        cat: 'ESCENA 03 · ESTADÍSTICA MUNDIAL DE INCENDIOS (WRI, 2026)',
+        title: '🔥 EL 42 % DE LA PÉRDIDA MUNDIAL DE ÁRBOLES ES POR INCENDIOS',
+        explain: 'Goldman et al. (2026) demostraron que los incendios fueron responsables del 42 % de toda la pérdida mundial de cobertura arbórea, quemando en los últimos tres años más del doble de árboles que hace dos décadas por olas de calor extremo.',
+        beforeMetric: 'Doble de Árboles Quemados',
+        beforeImg: './assets/u_wildfire_flames.jpg',
+        beforeCap: 'Olas de calor extremo y sequías severas convierten los bosques del planeta en material altamente inflamable.',
+        afterMetric: 'Detección en Fase de Conato',
+        afterImg: './assets/u_fire_night.jpg',
+        afterCap: 'Localización temprana del foco térmico antes de que las llamas se vuelvan incontrolables.'
+      },
+      // ESCENA 04 (2 cuadros de Estadística en el Perú)
+      {
+        match: 'Reporte INDECI',
+        cat: 'ESCENA 04 · ESTADÍSTICA NACIONAL EN EL PERÚ (INDECI / COEN-SINPAD, 2024)',
+        title: '🇵🇪 1 754 INCENDIOS FORESTALES EN EL PERÚ Y PICO DE 840 EN SEPTIEMBRE',
+        explain: 'El INDECI (2024), mediante el COEN y la plataforma digital SINPAD, registró 1 754 incendios forestales en el Perú en 2024 (con un pico de 840 en septiembre), destruyendo 63 710,38 ha naturales y 14 971,57 ha de cultivos, dejando 285 heridos y 35 fallecidos.',
+        beforeMetric: '63 710 ha + 35 Fallecidos',
+        beforeImg: './assets/u_indeci_fire.jpg',
+        beforeCap: 'Siniestros forestales fuera de control en la sierra y selva peruana durante la temporada crítica de septiembre.',
+        afterMetric: 'Plataforma Alerta SINPAD + Drones',
+        afterImg: './assets/u_command_center.jpg',
+        afterCap: 'Conexión directa de las alertas de drones inteligentes con los centros de operaciones de emergencia (COEN / COER).'
+      },
+      {
+        match: 'Defensoría del Pueblo',
+        cat: 'ESCENA 04 · CAUSA HUMANA EN EL PERÚ (DEFENSORÍA N.° 225 Y SERFOR, 2024)',
+        title: '⚠️ EL 95 % DE LOS INCENDIOS EN EL PERÚ SON CAUSADOS POR HUMANOS',
+        explain: 'La Defensoría del Pueblo (2024, Informe Defensorial n.° 225) y el SERFOR advirtieron que el 95 % de los incendios forestales en el país se originan por actividades humanas, sobre todo por la quema tradicional de rastrojos y pastos secos para abrir chacras.',
+        beforeMetric: '95 % Quemas Agrícolas',
+        beforeImg: './assets/u_serfor_burn.jpg',
+        beforeCap: 'Quema tradicional de rastrojos y pastos secos que se sale de control rápidamente por los fuertes vientos andinos.',
+        afterMetric: 'Detección de Quemas y Tala',
+        afterImg: './assets/u_farmland_drone.jpg',
+        afterCap: 'Patrullaje preventivo con drones sobre zonas agrícolas altoandinas para alertar quemas no autorizadas.'
+      },
+      // ESCENA 05 (2 cuadros de La Libertad COER)
+      {
+        match: 'COER La Libertad',
+        cat: 'ESCENA 05 · IMPACTO REGIONAL EN LA LIBERTAD (COER / AGRARIA.PE, 2024)',
+        title: '⛰️ 2 990 HECTÁREAS DESTRUIDAS EN +42 INCENDIOS EN LA LIBERTAD',
+        explain: 'En la región La Libertad se registraron más de 42 incendios forestales en una sola temporada crítica, destruyendo 2 990 hectáreas de pastizales de ichu, bosques de eucalipto y pino, y cultivos de panllevar (trigo, cebada y tarwi), además de afectar 41 viviendas y ganado.',
+        beforeMetric: '2 990 ha + 41 Viviendas',
+        beforeImg: './assets/u_burned_trees.jpg',
+        beforeCap: 'Pérdida de bosques de eucalipto, pino y cultivos campesinos de trigo, cebada y tarwi en la sierra liberteña.',
+        afterMetric: 'Protección Rural Liberteña',
+        afterImg: './assets/u_santiago_chuco.jpg',
+        afterCap: 'Cobertura aérea rápida sobre valles y laderas de difícil acceso para proteger viviendas y ganado comunal.'
+      },
+      {
+        match: 'Santiago de Chuco',
+        cat: 'ESCENA 05 · PROVINCIAS CRÍTICAS Y CABECERAS DE CUENCA EN LA LIBERTAD',
+        title: '💧 SANTIAGO DE CHUCO (+1 000 HA), OTUZCO, SÁNCHEZ CARRIÓN, BOLÍVAR Y PATAZ',
+        explain: 'Santiago de Chuco fue la provincia más perjudicada con más de 1 000 hectáreas consumidas por el fuego. No atender a tiempo estos incendios destruye los colchones naturales de agua en las cabeceras de cuenca que abastecen a los valles de La Libertad y erosiona el suelo.',
+        beforeMetric: 'Erosión y Pérdida de Agua',
+        beforeImg: './assets/u_eroded_slope.jpg',
+        beforeCap: 'Destrucción de la cobertura vegetal en laderas andinas que provoca erosión del suelo y sequía en las cuencas.',
+        afterMetric: 'Cabeceras de Cuenca Protegidas',
+        afterImg: './assets/u_andean_lagoon.jpg',
+        afterCap: 'Conservación de los colchones hídricos altoandinos que garantizan el agua para toda la región La Libertad.'
+      },
+      // ESCENA 06 (4 cuadros de Problema y Objetivos - Anexo 1)
+      {
+        match: 'Problema General',
+        cat: 'ESCENA 06 · ANEXO 1: FORMULACIÓN DEL PROBLEMA GENERAL',
+        title: '❓ PROBLEMA GENERAL DE LA INVESTIGACIÓN (LA LIBERTAD 2026)',
+        explain: 'Formulación textual del informe: «¿De qué manera la implementación de un sistema de información con drones inteligentes influye en el tiempo de detección temprana de incendios forestales y deforestación en zonas vulnerables de La Libertad durante el año 2026?»',
+        beforeMetric: 'Demora Crítica en la Sierra',
+        beforeImg: './assets/u_prob_gen.jpg',
+        beforeCap: 'Interrogante científica: La geografía accidentada y falta de caminos retrasan por horas la detección de anomalías.',
+        afterMetric: 'Variable: Sistema con Drones IA',
+        afterImg: './assets/u_quadcopter_sky.jpg',
+        afterCap: 'Evaluación del impacto directo de los vehículos aéreos no tripulados en reducir el tiempo de detección a segundos.'
+      },
+      {
+        match: 'Objetivo General',
+        cat: 'ESCENA 06 · ANEXO 1: OBJETIVO GENERAL DE LA INVESTIGACIÓN',
+        title: '🎯 OBJETIVO GENERAL: OPTIMIZAR TIEMPOS DE DETECCIÓN Y REPORTE',
+        explain: 'Formulación textual del informe: «Determinar el impacto de un sistema de información con drones inteligentes en la optimización de los tiempos de detección temprana y reporte de incendios forestales y deforestación en la región La Libertad, 2026.»',
+        beforeMetric: 'Tiempos de Respuesta Enormes',
+        beforeImg: './assets/u_stopwatch_time.jpg',
+        beforeCap: 'Sin optimización tecnológica: Las horas perdidas entre el inicio del fuego y el aviso impiden apagar el conato.',
+        afterMetric: 'Tiempos Optimizados al Máximo',
+        afterImg: './assets/u_obj_gen.jpg',
+        afterCap: 'Propósito central: Demostrar con evidencia científica 2023–2026 la reducción drástica en los tiempos de detección y alerta.'
+      },
+      {
+        match: 'Objetivos Específicos 1 y 2',
+        cat: 'ESCENA 06 · ANEXO 1: OBJETIVOS ESPECÍFICOS 1 (ALGORITMO) Y 2 (REDES)',
+        title: '⚡ OE1 (EXACTITUD VS. FALSOS POSITIVOS) Y OE2 (TIEMPO DE TRANSMISIÓN)',
+        explain: 'OE1 mide la tasa de exactitud y el margen de error del algoritmo al diferenciar focos reales de falsos positivos (neblina/sol). OE2 compara el tiempo de transmisión y procesamiento desde que el dron detecta la anomalía hasta notificar a las autoridades frente a métodos tradicionales.',
+        beforeMetric: 'Falsos Positivos y Latencia',
+        beforeImg: './assets/u_sun_glare_trees.jpg',
+        beforeCap: 'Reto informático: Evitar que el reflejo solar engañe a la cámara y evitar que el envío de datos demore.',
+        afterMetric: 'Alta Exactitud + Baja Latencia',
+        afterImg: './assets/u_oe1_oe2.jpg',
+        afterCap: 'Medición cuantitativa de precisión algorítmica (hasta 98,39 %) y velocidad de transmisión en segundos.'
+      },
+      {
+        match: 'Objetivo Específico 3',
+        cat: 'ESCENA 06 · ANEXO 1: OBJETIVO ESPECÍFICO 3 (BASE DE DATOS ESPACIAL)',
+        title: '🗺️ OE3: EFICIENCIA DEL HISTORIAL GEORREFERENCIADO PARA MAPAS DE CALOR',
+        explain: 'Formulación textual del informe: «Evaluar la eficiencia del sistema informático en el almacenamiento y estructuración del historial georreferenciado de las zonas afectadas, para proyectar mapas de calor sobre el avance de la deforestación en la sierra liberteña.»',
+        beforeMetric: 'Datos Dispersos sin Coordenadas',
+        beforeImg: './assets/u_paper_maps.jpg',
+        beforeCap: 'Registros manuales sin estructura espacial que impiden visualizar en qué laderas avanza más la tala.',
+        afterMetric: 'Base de Datos GIS + Mapas de Calor',
+        afterImg: './assets/u_oe3_db.jpg',
+        afterCap: 'Estructuración eficiente mediante coordenadas GeoJSON y Shapefiles para proyectar mapas de calor multitemporales.'
+      },
+      // ESCENA 07 (2 cuadros de Marcos Teóricos)
+      {
+        match: 'Arquitecturas Especializadas',
+        cat: 'ESCENA 07 · ANÁLISIS CRÍTICO DE MARCOS TEÓRICOS (2023–2026)',
+        title: '🧠 REDES YOLO (INCENDIOS EN TIEMPO REAL) VS. U-NET / VGG16 (DEFORESTACIÓN)',
+        explain: 'Los antecedentes de incendios (Saydirasulovich, Shamta, Yun, Luo, Ma) coinciden en usar redes de una sola etapa (YOLOv5, YOLOv8, YOLO11) porque procesan video al instante; mientras que en tala (Md Jelas, Borse) usan segmentación semántica U-Net, DeepLabV3+ y VGG16.',
+        beforeMetric: 'Cómputo Pesado Tradicional',
+        beforeImg: './assets/u_neural_code.jpg',
+        beforeCap: 'Redes antiguas de dos etapas que requerían servidores gigantes y no podían correr dentro de un dron.',
+        afterMetric: 'Familia YOLO + Segmentación U-Net',
+        afterImg: './assets/u_theory_yolo.jpg',
+        afterCap: 'Combinación de detección rápida en vuelo (YOLO) con segmentación precisa por píxeles (U-Net).'
+      },
+      {
+        match: 'Brecha Teórica',
+        cat: 'ESCENA 07 · VACÍO TEÓRICO DETECTADO EN LA LITERATURA',
+        title: '🔍 BRECHA TEÓRICA: UNIR DETECCIÓN DE INCENDIOS Y TALA EN UN SOLO SISTEMA',
+        explain: 'Hallazgo propio de nuestro informe: la literatura internacional estudió los incendios y la deforestación como si fueran dos problemas separados con programas distintos, pero en los Andes peruanos el desmonte (tala) y las quemas agrícolas ocurren al mismo tiempo.',
+        beforeMetric: 'Sistemas Separados e Incompletos',
+        beforeImg: './assets/u_theory_andes.jpg',
+        beforeCap: 'En la sierra peruana los agricultores talan y queman el desmonte simultáneamente para abrir terrenos de cultivo.',
+        afterMetric: 'Sistema Unificado Incendios + Tala',
+        afterImg: './assets/image3.png',
+        afterCap: 'Aporte de nuestra investigación: Integrar ambas detecciones dentro de una sola arquitectura informática.'
+      },
+      // ESCENA 08, 09, 10 y 11 (Los 7 Estudios Científicos)
+      {
+        match: 'Saydirasulovich',
+        cat: 'ESTUDIO 1 Y RESULTADO OE1 · SAYDIRASULOVICH ET AL. (2023) · SENSORS Q1',
+        title: '💨 YOLOv8 + BIFORMER + GSCONV: 79,4 % AP EN HUMO (SAYDIRASULOVICH, 2023)',
+        explain: 'Agregaron atención BiFormer, convoluciones ligeras GSConv y función Wise-IoU v3 a YOLOv8 para detectar humo desde drones. Lograron 79,4 % de precisión media (+3,3 % sobre YOLOv8 base) y 92,6 % en humo grande, pero en humo pequeño bajó a 71,3 % (28,7 % de margen de error ante nubes bajas).',
+        beforeMetric: '28,7 % Error en Humo Pequeño',
+        beforeImg: './assets/u_low_clouds.jpg',
+        beforeCap: 'Limitación detectada: Cuando la columna de humo recién empieza, las nubes bajas y cambios de luz generan falsas alarmas.',
+        afterMetric: '79,4 % AP General (92,6 % Grande)',
+        afterImg: './assets/image10.png',
+        afterCap: 'Mecanismo BiFormer + GSConv localizando columnas de humo desde vehículos aéreos no tripulados.'
+      },
+      {
+        match: 'Md Jelas',
+        cat: 'ESTUDIO 2 Y RESULTADO OE1/OE3 · MD JELAS ET AL. (2024) · FRONTIERS Q1',
+        title: '🌲 U-NET Y DEEPLABV3+: 92,78 % A 98,14 % EN TALA (>98 % EN PERÚ)',
+        explain: 'Evaluaron 22 estudios indexados en Scopus y Web of Science sobre segmentación de deforestación. Los modelos U-Net con atención y DeepLabV3+ lograron hasta 98,14 % de exactitud separando bosque sano de tala o minería, superando el 98 % con drones en la Amazonía peruana.',
+        beforeMetric: 'Semanas de Mapeo Manual',
+        beforeImg: './assets/u_amazon_river.jpg',
+        beforeCap: 'Inspección humana lenta de mapas satelitales afectada por sombras de árboles y relieve montañoso.',
+        afterMetric: '98,14 % Exactitud en Minutos',
+        afterImg: './assets/image9.png',
+        afterCap: 'Segmentación automática píxel por píxel con drones en la Amazonía peruana superando el 98 % de acierto.'
+      },
+      {
+        match: 'Shamta y Demir',
+        cat: 'ESTUDIO 3 Y RESULTADO OE1/OE2 · SHAMTA Y DEMIR (2024) · PLOS ONE Q1',
+        title: '🚁 DRON CUADRICÓPTERO CON JETSON NANO Y GSM: 96 % EXACTITUD EN VIVO',
+        explain: 'Construyeron un cuadricóptero con cámara, GPS/GSM, Raspberry Pi (Navio2) y NVIDIA Jetson Nano. Alcanzaron 96 % de exactitud en clasificación (CNN-RCNN / YOLOv8) y 89 % detectando fuego en pleno vuelo (YOLOv8n), enviando foto + GPS en segundos (batería ~25 min).',
+        beforeMetric: 'Batería Limitada (~25 min)',
+        beforeImg: './assets/u_electronics_lab.jpg',
+        beforeCap: 'Reto de hardware: La autonomía de 25 minutos exige procesar la imagen en el mismo dron sin gastar energía de más.',
+        afterMetric: '96 % Exactitud + Alerta GSM',
+        afterImg: './assets/image11.png',
+        afterCap: 'Envío inmediato de la fotografía del fuego y coordenadas GPS a la estación terrena en cuestión de segundos.'
+      },
+      {
+        match: 'Yun et al.',
+        cat: 'ESTUDIO 4 Y RESULTADO OE2 · YUN ET AL. (2025) · REVISTA FIRE Q1',
+        title: '🔥 YOLOv8 + SPDCONV + MLCA: +5,5 % SENSIBILIDAD Y -43,8 % PARÁMETROS',
+        explain: 'Para detectar focos diminutos tapados por ramas y borrosos por el viento en montaña (>3 200 fotos aéreas), integraron SPDConv, C2f-PConv, atención MLCA y W-IoU. Subieron la sensibilidad en +5,5 %, la exactitud en +2,17 % y redujeron los parámetros en 43,8 % (quedando en 5,96 millones).',
+        beforeMetric: 'Focos Ocultos tras Ramas',
+        beforeImg: './assets/u_server_rack.jpg',
+        beforeCap: 'Cuando el dron vuela alto sobre la montaña, las primeras llamas ocupan muy pocos píxeles y las ramas las tapan.',
+        afterMetric: '5,96 M Parámetros (-43,8 %)',
+        afterImg: './assets/image12.png',
+        afterCap: 'Modelo ultraligero (-43,3 % de peso de archivo) que distingue llamas diminutas entre los árboles sin saturar el dron.'
+      },
+      {
+        match: 'Luo et al.',
+        cat: 'ESTUDIO 5 Y RESULTADO OE1/OE2 · LUO ET AL. (2025) · FORESTS Q1',
+        title: '🌤️ YOLO-UFS (MOBILENETV4): 91,3 % mAP Y 7,4 MB A 30 FPS EN JETSON NANO',
+        explain: 'Entrenaron la red con muestras negativas reales del bosque (brillo del sol, neblina matutina, hojas rojizas y sombras) y añadieron MobileNetV4 + BiFPN + estabilización. Lograron 91,3 % mAP (+3,8 %) y redujeron el peso en >74 %, corriendo a 30 FPS reales con solo 7,4 MB en una Jetson Nano.',
+        beforeMetric: 'Brillo Solar y Hojas Rojizas',
+        beforeImg: './assets/u_autumn_fog.jpg',
+        beforeCap: 'Elementos distractores del bosque real (neblina matutina, sol y hojas amarillas/rojas) que engañan a cámaras normales.',
+        afterMetric: '7,4 MB · 30 FPS Reales (91,3 %)',
+        afterImg: './assets/u_hardware_chip.jpg',
+        afterCap: 'Ejecución fluida a 30 cuadros por segundo en tarjeta económica Jetson Nano sin falsas alarmas.'
+      },
+      {
+        match: 'Borse',
+        cat: 'ESTUDIO 6 Y RESULTADO OE1/OE3 · BORSE ET AL. (2025) · PLOS ONE Q1',
+        title: '🌲 SISTEMA AETDA (VGG16 + YOLOv8): 98,39 % EN 10 400+ ÁRBOLES Y GEOJSON',
+        explain: 'Evaluaron más de 10 400 árboles con imágenes de dron de menos de 10 cm/píxel integradas con coordenadas GeoJSON y Shapefiles. VGG16 alcanzó 98,39 % de exactitud de prueba y YOLOv8 logró un AUC de 0,95 trazando cajas delimitadoras por cada copa de árbol.',
+        beforeMetric: 'Satélite Borroso (1–5 m/px)',
+        beforeImg: './assets/u_pine_canopy.jpg',
+        beforeCap: 'Las imágenes satelitales no permiten distinguir copas individuales ni fiscalizar la división ilegal de tierras.',
+        afterMetric: '98,39 % VGG16 · AUC 0,95',
+        afterImg: './assets/image17.png',
+        afterCap: 'Conteo y clasificación automatizada de 10 400 árboles exportando coordenadas exactas en GeoJSON y Shapefiles.'
+      },
+      {
+        match: 'Ma et al.',
+        cat: 'ESTUDIO 7 Y RESULTADO OE1/OE2 · MA ET AL. (2026) · SUSTAINABILITY Q1',
+        title: '⚡ AHE-YOLO (YOLO11): 94,8 % mAP, PESO DE SOLO 3,5 MB Y 333,3 FPS',
+        explain: 'El estudio más reciente (2026): incorporaron los módulos ADown, HS-FPN y EMBC en YOLO11 sobre 5 118 imágenes complejas (bosque denso, humo lejano e incendios nocturnos). Lograron 94,8 % mAP, 85,1 % sensibilidad, -39,7 % parámetros (1,56 M), solo 3,5 MB de peso y 333,3 FPS en laboratorio.',
+        beforeMetric: 'Humo Lejano e Incendios Nocturnos',
+        beforeImg: './assets/u_distant_smoke.jpg',
+        beforeCap: 'Escenarios complejos de noche o con humo muy distante donde los algoritmos convencionales pierden sensibilidad.',
+        afterMetric: '3,5 MB · 333,3 FPS (+16,5 %)',
+        afterImg: './assets/u_gpu_circuit.jpg',
+        afterCap: 'Máxima compresión (1,56 M parámetros) y mapas térmicos de activación para vigilancia forestal sostenible.'
+      },
+      // ESCENA 12 (3 cuadros de Resultados OE3: <10 cm/px, Amazonía Peruana y GeoJSON)
+      {
+        match: '10 cm/píxel',
+        cat: 'RESULTADOS OBJETIVO ESPECÍFICO 3 · RESOLUCIÓN ESPACIAL EN SENCILLO',
+        title: '🔍 ¿QUÉ ES RESOLUCIÓN MENOR A 10 CM/PÍXEL? (50 VECES MÁS NÍTIDO)',
+        explain: 'Explicación fácil para el jurado: En una foto de satélite cada píxel mide de 1 a 5 metros, por lo que un árbol se ve como un punto borroso. Con el dron volando bajo las nubes, cada píxel mide MENOS DE 10 CENTÍMETROS: se ve cada copa y rama con nitidez total (98,39 % de exactitud en 10 400 árboles).',
+        beforeMetric: 'Satélite: 1 a 5 m/píxel',
+        beforeImg: './assets/u_satellite_space.jpg',
+        beforeCap: 'Vista lejana desde el espacio: Baja nitidez y bloqueo por nubes que impiden detectar tala selectiva temprano.',
+        afterMetric: 'Dron: < 10 cm/píxel (98,39 %)',
+        afterImg: './assets/image17.png',
+        afterCap: 'Vista cercana de dron: Claridad milimétrica para auditar cada copa de árbol y detectar claros de deforestación.'
+      },
+      {
+        match: 'Amazonía Peruana',
+        cat: 'RESULTADOS OBJETIVO ESPECÍFICO 3 · SEGMENTACIÓN AUTOMÁTICA EN PERÚ',
+        title: '🇵🇪 ¿QUÉ ES SEGMENTACIÓN U-NET > 98 % EN LA AMAZONÍA PERUANA?',
+        explain: 'Explicación fácil para el jurado: Revisar mapas a mano para buscar zonas taladas tomaba semanas. La red neuronal U-Net analiza la foto del dron y colorea automáticamente píxel por píxel dónde hay bosque sano y dónde hay tala o minería ilegal en minutos, logrando más de 98 % de exactitud en el Perú.',
+        beforeMetric: 'Revisión Humana: Semanas',
+        beforeImg: './assets/u_amazon_river.jpg',
+        beforeCap: 'Inspección manual lenta y propensa a errores humanos frente a miles de hectáreas de bosque.',
+        afterMetric: 'U-Net en Perú: > 98 % en Minutos',
+        afterImg: './assets/image9.png',
+        afterCap: 'Cuantificación automática de hectáreas deforestadas en minutos con precisión comprobada en territorio peruano.'
+      },
+      {
+        match: 'GeoJSON',
+        cat: 'RESULTADOS OBJETIVO ESPECÍFICO 3 · BASE DE DATOS Y MAPAS DE CALOR',
+        title: '🗺️ ¿QUÉ ES FORMATO GEOJSON Y POR QUÉ REEMPLAZA AL VIDEO PESADO?',
+        explain: 'Explicación fácil para el jurado: Guardar horas de video en la base de datos llenaría la memoria y no se podría transmitir desde la sierra. GeoJSON es un archivo ultraligero que guarda solo las coordenadas GPS del borde de la zona quemada o talada (polígonos), permitiendo dibujar mapas de calor mes a mes.',
+        beforeMetric: 'Videos Pesados Imposibles de Subir',
+        beforeImg: './assets/u_drone_battery.jpg',
+        beforeCap: 'Almacenar videos completos satura el servidor y consume el ancho de banda en zonas rurales.',
+        afterMetric: 'Polígonos GeoJSON + Mapas de Calor',
+        afterImg: './assets/image14.png',
+        afterCap: 'Estructuración ligera de latitud, longitud y fecha para proyectar mapas de calor del avance de la deforestación.'
+      },
+      // ESCENA 14 (3 barras de Discusión Crítica)
+      {
+        match: 'Consensos Científicos',
+        cat: 'ESCENA 14 · DISCUSIÓN CRÍTICA: CONVERGENCIAS ENTRE LOS 7 AUTORES',
+        title: '✅ CONSENSOS: SUPERIORIDAD DEL DRON BAJO NUBES Y COMPRESIÓN POR BATERÍA',
+        explain: 'Existe acuerdo total en dos puntos: 1) El dron (<10 cm/px, volando bajo las nubes) supera ampliamente a las torres fijas y a los satélites (1–5 m/px, bloqueados por neblina); y 2) Como la batería dura ~25 minutos, es obligatorio comprimir los algoritmos de IA (a 3,5–7,4 MB) para ahorrar energía a bordo.',
+        beforeMetric: 'Torres Fijas y Satélites Ciegos',
+        beforeImg: './assets/u_lookout_tower.jpg',
+        beforeCap: 'Observación estática tradicional incapaz de ver detrás de las montañas o debajo de la neblina andina.',
+        afterMetric: 'Dron + IA Ultraligera (3,5–7,4 MB)',
+        afterImg: './assets/image1.png',
+        afterCap: 'Monitoreo aéreo activo con redes neuronales comprimidas que maximizan la autonomía de vuelo.'
+      },
+      {
+        match: 'Controversias Técnicas',
+        cat: 'ESCENA 14 · DISCUSIÓN CRÍTICA: DIVERGENCIAS EN LA LITERATURA',
+        title: '⚡ CONTROVERSIAS: ¿HUMO VS. LLAMAS? Y ¿PROCESAR EN EL AIRE VS. ESTACIÓN BASE?',
+        explain: 'Debate científico 1: Saydirasulovich (2023) prioriza buscar humo primero, pero Yun, Luo y Ma rebaten que en montaña la neblina matutina es idéntica al humo joven y exigen combinar con focos de calor e imágenes negativas. Debate 2: Shamta y Luo procesan a bordo en Jetson Nano (30 FPS) para alerta inmediata, mientras Borse procesa en PC base con VGG16 para máxima exactitud (98,39 %).',
+        beforeMetric: 'Debate: Solo Humo / PC Base',
+        beforeImg: './assets/u_clouds_mountain.jpg',
+        beforeCap: 'Depender únicamente del humo visible en zonas altoandinas con neblina matutina provoca falsos positivos.',
+        afterMetric: 'Fusión Humo + Calor + Edge AI',
+        afterImg: './assets/u_ground_station.jpg',
+        afterCap: 'Síntesis equilibrada: Procesamiento ligero de alerta rápida en el dron + auditoría geoespacial en estación base.'
+      },
+      {
+        match: 'Lagunas y Propuesta',
+        cat: 'ESCENA 14 · APORTE INGENIERÍA DE SISTEMAS PARA LA SIERRA DE LA LIBERTAD',
+        title: '⛰️ PROPUESTA ANDINA: CÁMARA TÉRMICA EN ICHU + RED DE RADIO LORAWAN',
+        explain: 'Descubrimos dos lagunas para aplicar en Santiago de Chuco, Otuzco, Sánchez Carrión, Bolívar y Pataz: 1) Superar el sesgo de cámaras RGB diurnas integrando cámaras térmicas infrarrojas económicas que detecten brasas nocturnas en ichu; y 2) Superar la falta de señal celular GSM en quebradas usando radio de largo alcance LoRaWAN y guardado local con sincronización automática.',
+        beforeMetric: 'Incendios Nocturnos sin Señal GSM',
+        beforeImg: './assets/u_andean_canyon.jpg',
+        beforeCap: 'Quebradas profundas de los Andes liberteños donde no llega la cobertura de internet móvil 4G/GSM.',
+        afterMetric: 'Sensor Térmico IR + Red LoRaWAN',
+        afterImg: './assets/image18.png',
+        afterCap: 'Detección térmica de brasas ocultas en pastizales de ichu y transmisión por radiofrecuencia LoRaWAN.'
+      }
+    ];
+
+    function openVisualCompare(item) {
+      document.getElementById('vcCategory').textContent = item.cat;
+      document.getElementById('vcTitle').textContent = item.title;
+      document.getElementById('vcSimpleExplain').textContent = item.explain;
+      document.getElementById('vcBeforeMetric').textContent = item.beforeMetric;
+      document.getElementById('vcBeforeImg').src = item.beforeImg;
+      document.getElementById('vcBeforeCaption').textContent = item.beforeCap;
+      document.getElementById('vcAfterMetric').textContent = item.afterMetric;
+      document.getElementById('vcAfterImg').src = item.afterImg;
+      document.getElementById('vcAfterCaption').textContent = item.afterCap;
+      document.getElementById('visualCompareModal3D').classList.add('open');
+    }
+
+    function closeVisualCompare(ev) {
+      document.getElementById('visualCompareModal3D').classList.remove('open');
+    }
+
+    // Conectar automáticamente el clic en todas las tarjetas (.risk-card, .frost-carousel-card, .glow-bar, .white-step-card, .entry-pill-card)
+    document.querySelectorAll('.risk-card, .frost-carousel-card, .glow-bar, .white-step-card, .entry-pill-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const text = card.innerText || '';
+        const found = visualCompareDB.find(item => text.includes(item.match));
+        if (found) {
+          openVisualCompare(found);
+        } else {
+          // Comparativa general de progreso del proyecto para cualquier otra tarjeta
+          openVisualCompare({
+            cat: 'PROGRESO E IMPACTO DEMOSTRADO · UCV 2026',
+            title: '🚁 IMPACTO REAL DEL SISTEMA DE DRONES INTELIGENTES',
+            explain: 'Toda la evidencia científica revisada (2023–2026) confirma que integrar drones (<10 cm/píxel), visión artificial ultraligera (YOLO11 / U-Net), cámaras térmicas y radio LoRaWAN reduce la detección de incendios y tala en La Libertad de varias horas a pocos segundos.',
+            beforeMetric: 'Vigilancia Tradicional Reactiva',
+            beforeImg: './assets/image10.png',
+            beforeCap: 'Sin el sistema: 2 990 ha perdidas en La Libertad y 1 754 incendios en el Perú por avisos tardíos y bloqueo satelital por nubes.',
+            afterMetric: '98,39 % Exactitud · Alerta en Segundos',
+            afterImg: './assets/image1.png',
+            afterCap: 'Con el sistema propuesto: Detección temprana bajo las nubes, cero falsas alarmas por neblina y mapas de calor GeoJSON en tiempo real.'
+          });
+        }
+      });
+    });
+
+    goToScene(0);
+  </script>
+</body>
+</html>
